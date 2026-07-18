@@ -21,6 +21,7 @@ type DashboardProps = {
 export function Dashboard({ auth }: DashboardProps) {
   const [rankingTrack, setRankingTrack] = useState<RankingTrack>("singles");
   const [selectedMatchId, setSelectedMatchId] = useState<string | null>(null);
+  const [activePage, setActivePage] = useState("dashboard");
   const activeTheme = useActiveTheme();
   const players = usePlayers();
   const leaderboard = useLeaderboard(8, rankingTrack);
@@ -29,64 +30,86 @@ export function Dashboard({ auth }: DashboardProps) {
   const openTournament = tournaments.data?.[0];
 
   return (
-    <AppShell profile={auth.profile}>
+    <AppShell profile={auth.profile} activePage={activePage} onPageChange={setActivePage}>
       <main className="px-4 py-5 lg:px-8 lg:py-7">
-        <div className="mx-auto max-w-dashboard space-y-5">
-          <section id="dashboard" className="dashboard-hero">
-            <ThemeStrip theme={activeTheme.data} />
-          </section>
-
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_392px]">
-            <div className="space-y-5">
-              <section id="matches">
+        <div className="mx-auto max-w-dashboard">
+          {activePage === "dashboard" ? (
+            <div className="page-stack">
+              <ThemeStrip theme={activeTheme.data} />
+              <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_392px]">
                 <MatchEntryForm players={players.data ?? []} activeTheme={activeTheme.data} tournaments={tournaments.data ?? []} />
-              </section>
-              <section id="match-history">
+                <div className="space-y-5">
+                  <RatingCard profile={auth.profile} />
+                  <ProfileAnalytics profile={auth.profile} track={rankingTrack} />
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {activePage === "leaderboard" ? (
+            <div className="page-stack">
+              <PageTitle title="Leaderboard" eyebrow="Singles and doubles ladder" />
+              <LeaderboardPreview
+                players={leaderboard.data ?? []}
+                isLoading={leaderboard.isLoading}
+                track={rankingTrack}
+                onTrackChange={setRankingTrack}
+              />
+            </div>
+          ) : null}
+
+          {activePage === "matches" ? (
+            <div className="page-stack">
+              <PageTitle title="Matches" eyebrow="Scorecards and recent results" />
+              <div className="grid gap-5 xl:grid-cols-[minmax(0,520px)_1fr]">
+                <MatchEntryForm players={players.data ?? []} activeTheme={activeTheme.data} tournaments={tournaments.data ?? []} />
                 <RecentMatchesList
                   matches={recentMatches.data ?? []}
                   isLoading={recentMatches.isLoading}
                   selectedMatchId={selectedMatchId}
                   onViewMatch={(match) => setSelectedMatchId((current) => (current === match.id ? null : match.id))}
                 />
-              </section>
-              <ProfileAnalytics profile={auth.profile} track={rankingTrack} />
+              </div>
             </div>
+          ) : null}
 
-            <div className="space-y-5">
-              <RatingCard profile={auth.profile} />
-              <section id="leaderboard">
-                <LeaderboardPreview
-                  players={leaderboard.data ?? []}
-                  isLoading={leaderboard.isLoading}
-                  track={rankingTrack}
-                  onTrackChange={setRankingTrack}
-                />
-              </section>
-              <section id="tournaments">
-                <RetroPanel className="p-5">
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <h2 className="flex items-center gap-2 font-display text-2xl text-deep-green">
-                      <Trophy size={23} />
-                      Tournament
-                    </h2>
-                    <Badge tone="provisional">{openTournament ? "Open" : "Waiting"}</Badge>
-                  </div>
-                  <p className="font-bold text-ink">
-                    {openTournament
-                      ? `${openTournament.name ?? "Next bracket"} is ready for signups and match reporting.`
-                      : "No active bracket is open right now."}
-                  </p>
-                </RetroPanel>
-              </section>
-              {auth.profile?.role === "admin" ? (
-                <section id="admin">
-                  <AdminControls players={players.data ?? []} />
-                </section>
-              ) : null}
+          {activePage === "tournaments" ? (
+            <div className="page-stack">
+              <PageTitle title="Tournaments" eyebrow="Single-elimination nights" />
+              <RetroPanel strong className="p-6">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h2 className="flex items-center gap-2 font-display text-3xl text-deep-green">
+                    <Trophy size={26} />
+                    Tournament board
+                  </h2>
+                  <Badge tone="provisional">{openTournament ? "Open" : "Waiting"}</Badge>
+                </div>
+                <p className="max-w-2xl font-bold text-ink">
+                  {openTournament
+                    ? `${openTournament.name ?? "Next bracket"} is ready for signups and match reporting.`
+                    : "No active bracket is open right now."}
+                </p>
+              </RetroPanel>
             </div>
-          </div>
+          ) : null}
+
+          {activePage === "admin" && auth.profile?.role === "admin" ? (
+            <div className="page-stack">
+              <PageTitle title="Admin" eyebrow="Whitelist, ratings, and themes" />
+              <AdminControls players={players.data ?? []} />
+            </div>
+          ) : null}
         </div>
       </main>
     </AppShell>
+  );
+}
+
+function PageTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
+  return (
+    <div className="page-title">
+      <p className="text-sm font-black uppercase text-clay-red">{eyebrow}</p>
+      <h1 className="font-display text-4xl leading-none text-deep-green sm:text-5xl">{title}</h1>
+    </div>
   );
 }

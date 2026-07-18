@@ -114,7 +114,7 @@ function TrendSvg({ points }: { points: number[] }) {
       {points.map((point, index) => {
         const x = (index / Math.max(1, points.length - 1)) * width;
         const y = height - ((point - min) / spread) * (height - 18) - 9;
-        return <circle key={`${point}-${index}`} cx={x} cy={y} r="4" fill="#E8C84A" stroke="#063B22" strokeWidth="2" />;
+        return <circle key={`${point}-${index}`} cx={x} cy={y} r="4" fill="#FFD700" stroke="#063B22" strokeWidth="2" />;
       })}
     </svg>
   );

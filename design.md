@@ -43,16 +43,17 @@ Avoid:
 
 | Token | Hex | Usage |
 | --- | --- | --- |
-| `court-green` | `#0F5D3B` | Primary navigation, major headers, primary buttons |
-| `deep-green` | `#073B2A` | High-contrast text, page titles, button text on yellow |
+| `court-green` | `#006400` | Primary navigation, major headers, primary buttons |
+| `deep-green` | `#063B22` | High-contrast text, page titles, button text on yellow |
 | `grass-green` | `#2E8B57` | Success states, positive rating movement, secondary actions |
-| `cream` | `#FFF4D8` | Main app background |
+| `cream` | `#FFFDD0` | Main app background |
 | `warm-white` | `#FFFBF0` | Panels, cards, forms, table surfaces |
-| `pickle-yellow` | `#C8D94E` | CTAs, active states, highlights, badges |
-| `clay-red` | `#C95C3B` | Losses, warnings, destructive admin actions |
-| `sky-blue` | `#8ED6E8` | Informational accents and empty states |
+| `pickle-yellow` | `#FFD700` | Small golden ball accents and score moments |
+| `clay-red` | `#D22B2B` | Losses, warnings, destructive admin actions |
+| `dark-grey` | `#2B2B2B` | Hover states, secondary rails, dense controls |
+| `soft-grey` | `#EFE9DA` | Muted badges and disabled surfaces |
 | `ink` | `#1D241F` | Main body text |
-| `net-line` | `#E4D6A7` | Borders, dividers, court-line details |
+| `net-line` | `#D8C59B` | Borders, dividers, court-line details |
 
 ### 3.2 Color Ratios
 
@@ -61,8 +62,9 @@ Recommended visual balance:
 - 45% cream and warm-white.
 - 30% tennis greens.
 - 15% net-line and neutral structure.
-- 7% pickle-yellow accents.
-- 3% clay-red or sky-blue states.
+- 7% clay-red emphasis.
+- 3% golden ball-yellow accents.
+- 5% dark-grey structural contrast.
 
 Pickle-yellow should feel special. Use it for emphasis, not as a full-page dominant color.
 
@@ -72,8 +74,8 @@ Pickle-yellow should feel special. Use it for emphasis, not as a full-page domin
 | --- | --- |
 | Win | Grass green badge, cream text |
 | Loss | Clay red badge, cream text |
-| Active theme | Pickle-yellow badge with deep-green text |
-| Provisional player | Sky-blue accent with green border |
+| Active theme | Clay-red badge with cream text |
+| Provisional player | Soft-grey accent with green border |
 | Top rank | Pickle-yellow chip with thick green outline |
 | Disabled state | Cream fill, net-line border, muted ink |
 | Focus state | Pickle-yellow outline or shadow |
@@ -149,7 +151,7 @@ Avoid excessive pill shapes for table rows and dense list items. Buttons may be 
 Use offset shadows that feel printed or cartoon-like:
 
 ```css
-box-shadow: 4px 4px 0 #073B2A;
+box-shadow: 4px 4px 0 #063B22;
 ```
 
 Interaction:
@@ -282,8 +284,8 @@ Do not nest cards inside cards. If related content needs grouping, use dividers,
 
 Badge types:
 
-- `Theme`: pickle-yellow with deep-green border.
-- `Provisional`: sky-blue with deep-green text.
+- `Theme`: clay-red with cream text.
+- `Provisional`: soft-grey with deep-green text.
 - `Win`: grass-green with cream text.
 - `Loss`: clay-red with cream text.
 - `Rank`: cream fill with deep-green outline.
@@ -549,23 +551,24 @@ Recommended Tailwind color extension:
 ```ts
 colors: {
   court: {
-    green: '#0F5D3B',
-    deep: '#073B2A',
+    green: '#006400',
+    deep: '#063B22',
     grass: '#2E8B57'
   },
   club: {
-    cream: '#FFF4D8',
+    cream: '#FFFDD0',
     white: '#FFFBF0',
-    line: '#E4D6A7'
+    line: '#D8C59B'
   },
   ball: {
-    yellow: '#C8D94E'
+    yellow: '#FFD700'
   },
   clay: {
-    red: '#C95C3B'
+    red: '#D22B2B'
   },
-  sky: {
-    blue: '#8ED6E8'
+  neutral: {
+    dark: '#2B2B2B',
+    soft: '#EFE9DA'
   },
   ink: '#1D241F'
 }
@@ -575,8 +578,8 @@ Recommended reusable utility classes:
 
 ```css
 .retro-border {
-  border: 3px solid #073B2A;
-  box-shadow: 4px 4px 0 #073B2A;
+  border: 3px solid #063B22;
+  box-shadow: 4px 4px 0 #063B22;
 }
 
 .retro-press {
@@ -585,7 +588,7 @@ Recommended reusable utility classes:
 
 .retro-press:active {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 #073B2A;
+  box-shadow: 2px 2px 0 #063B22;
 }
 ```
 

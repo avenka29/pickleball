@@ -1,5 +1,5 @@
 import { BarChart3, LayoutDashboard, LogOut, Medal, Shield, Swords, Trophy } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { RetroButton } from "../../components/RetroButton";
 import { useSignOut } from "../auth/api";
@@ -8,60 +8,23 @@ import type { Profile } from "./types";
 type AppShellProps = {
   profile: Profile | null;
   children: ReactNode;
+  activePage: string;
+  onPageChange: (page: string) => void;
 };
 
 const playerNav = [
-  { label: "Dashboard", icon: LayoutDashboard, sectionId: "dashboard" },
-  { label: "Leaderboard", icon: Medal, sectionId: "leaderboard" },
-  { label: "Matches", icon: Swords, sectionId: "matches" },
-  { label: "Tournaments", icon: Trophy, sectionId: "tournaments" },
+  { label: "Dashboard", icon: LayoutDashboard, pageId: "dashboard" },
+  { label: "Leaderboard", icon: Medal, pageId: "leaderboard" },
+  { label: "Matches", icon: Swords, pageId: "matches" },
+  { label: "Tournaments", icon: Trophy, pageId: "tournaments" },
 ];
 
-export function AppShell({ profile, children }: AppShellProps) {
+export function AppShell({ profile, children, activePage, onPageChange }: AppShellProps) {
   const signOut = useSignOut();
   const navItems = useMemo(
-    () => (profile?.role === "admin" ? [...playerNav, { label: "Admin", icon: Shield, sectionId: "admin" }] : playerNav),
+    () => (profile?.role === "admin" ? [...playerNav, { label: "Admin", icon: Shield, pageId: "admin" }] : playerNav),
     [profile?.role],
   );
-  const [activeSection, setActiveSection] = useState(navItems[0].sectionId);
-
-  useEffect(() => {
-    const navSectionIds = navItems.map((item) => item.sectionId);
-
-    const syncFromHash = () => {
-      const hashedSection = window.location.hash.replace("#", "");
-      if (navSectionIds.includes(hashedSection)) {
-        setActiveSection(hashedSection);
-      }
-    };
-
-    syncFromHash();
-    window.addEventListener("hashchange", syncFromHash);
-
-    const sections = navSectionIds.map((sectionId) => document.getElementById(sectionId)).filter((section): section is HTMLElement => Boolean(section));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntry = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visibleEntry?.target.id) {
-          setActiveSection(visibleEntry.target.id);
-        }
-      },
-      {
-        rootMargin: "-96px 0px -55% 0px",
-        threshold: [0.1, 0.35, 0.65],
-      },
-    );
-
-    sections.forEach((section) => observer.observe(section));
-
-    return () => {
-      window.removeEventListener("hashchange", syncFromHash);
-      observer.disconnect();
-    };
-  }, [navItems]);
 
   return (
     <div className="min-h-screen bg-cream text-ink lg:grid lg:grid-cols-[264px_1fr]">
@@ -78,18 +41,18 @@ export function AppShell({ profile, children }: AppShellProps) {
           </div>
         </div>
 
-        <nav className="relative space-y-3" aria-label="Dashboard sections">
+        <nav className="relative space-y-3" aria-label="App pages">
           {navItems.map((item) => (
-            <a
+            <button
               key={item.label}
-              className={`nav-item ${activeSection === item.sectionId ? "is-active" : ""}`}
-              href={`#${item.sectionId}`}
-              onClick={() => setActiveSection(item.sectionId)}
-              aria-current={activeSection === item.sectionId ? "page" : undefined}
+              className={`nav-item ${activePage === item.pageId ? "is-active" : ""}`}
+              type="button"
+              onClick={() => onPageChange(item.pageId)}
+              aria-current={activePage === item.pageId ? "page" : undefined}
             >
               <item.icon size={19} />
               {item.label}
-            </a>
+            </button>
           ))}
         </nav>
 
@@ -132,17 +95,18 @@ export function AppShell({ profile, children }: AppShellProps) {
         {children}
       </div>
 
-      <nav className={`mobile-bottom-nav ${navItems.length === 5 ? "grid-cols-5" : "grid-cols-4"} lg:hidden`}>
+      <nav className={`mobile-bottom-nav ${navItems.length === 5 ? "grid-cols-5" : "grid-cols-4"} lg:hidden`} aria-label="App pages">
         {navItems.map((item) => (
-          <a
+          <button
             key={item.label}
-            className={activeSection === item.sectionId ? "is-active" : ""}
-            href={`#${item.sectionId}`}
-            onClick={() => setActiveSection(item.sectionId)}
+            className={activePage === item.pageId ? "is-active" : ""}
+            type="button"
+            onClick={() => onPageChange(item.pageId)}
+            aria-current={activePage === item.pageId ? "page" : undefined}
           >
             <item.icon size={20} />
             <span>{item.label}</span>
-          </a>
+          </button>
         ))}
       </nav>
     </div>
