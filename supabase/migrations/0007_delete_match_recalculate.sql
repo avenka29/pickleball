@@ -45,12 +45,16 @@ begin
     from public.profiles
     where id = replay_match.winner_id;
 
+    if not found then
+      raise exception 'Cannot recalculate ratings: missing winner profile %', replay_match.winner_id using errcode = '23503';
+    end if;
+
     select * into loser_profile
     from public.profiles
     where id = replay_match.loser_id;
 
     if not found then
-      raise exception 'Cannot recalculate ratings: missing match participant profile' using errcode = '23503';
+      raise exception 'Cannot recalculate ratings: missing loser profile %', replay_match.loser_id using errcode = '23503';
     end if;
 
     if replay_match.mode = 'doubles' then
@@ -58,9 +62,17 @@ begin
       from public.profiles
       where id = replay_match.winner_partner_id;
 
+      if not found then
+        raise exception 'Cannot recalculate ratings: missing winner partner profile %', replay_match.winner_partner_id using errcode = '23503';
+      end if;
+
       select * into loser_partner_profile
       from public.profiles
       where id = replay_match.loser_partner_id;
+
+      if not found then
+        raise exception 'Cannot recalculate ratings: missing loser partner profile %', replay_match.loser_partner_id using errcode = '23503';
+      end if;
 
       winner_team_before := (
         coalesce(winner_profile.doubles_elo, 1200)::numeric
@@ -93,7 +105,9 @@ begin
       replay_match.mode,
       'winner',
       replay_match.winner_partner_id,
-      winner_team_before
+      winner_team_before,
+      replay_match.winner_score,
+      replay_match.loser_score
     );
 
     if replay_match.mode = 'doubles' then
@@ -108,7 +122,9 @@ begin
         replay_match.mode,
         'winner',
         replay_match.winner_id,
-        winner_team_before
+        winner_team_before,
+        replay_match.winner_score,
+        replay_match.loser_score
       );
     end if;
 
@@ -123,7 +139,9 @@ begin
       replay_match.mode,
       'loser',
       replay_match.loser_partner_id,
-      loser_team_before
+      loser_team_before,
+      replay_match.winner_score,
+      replay_match.loser_score
     );
 
     if replay_match.mode = 'doubles' then
@@ -138,7 +156,9 @@ begin
         replay_match.mode,
         'loser',
         replay_match.loser_id,
-        loser_team_before
+        loser_team_before,
+        replay_match.winner_score,
+        replay_match.loser_score
       );
     end if;
   end loop;
