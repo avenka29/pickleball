@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Bungee+Shade&family=Nunito:wght@500;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800;900&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,9 +6,21 @@
 
 @layer base {
   :root {
-    color: #1d241f;
-    background: #fffdd0;
-    font-family: "Nunito", system-ui, sans-serif;
+    --color-court-green: #1d4a34;
+    --color-deep-green: #12261c;
+    --color-grass-green: #1e8e5a;
+    --color-cream: #f4f5f1;
+    --color-warm-white: #ffffff;
+    --color-pickle-yellow: #cbff3d;
+    --color-clay-red: #c93a22;
+    --color-dark-grey: #12261c;
+    --color-soft-grey: #e8eae3;
+    --color-ink: #3a453d;
+    --color-net-line: #d6d9ce;
+
+    color: var(--color-ink);
+    background: var(--color-cream);
+    font-family: "Archivo", system-ui, sans-serif;
     font-synthesis: none;
     scroll-behavior: smooth;
     scroll-padding-top: 92px;
@@ -21,24 +33,7 @@
     min-width: 320px;
     min-height: 100vh;
     margin: 0;
-    background:
-      linear-gradient(90deg, rgba(216, 197, 155, 0.42) 1px, transparent 1px),
-      linear-gradient(rgba(216, 197, 155, 0.32) 1px, transparent 1px),
-      #fffdd0;
-    background-size: 44px 44px;
-  }
-
-  body::before {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    content: "";
-    background:
-      radial-gradient(circle at 18px 18px, rgba(0, 100, 0, 0.06) 0 2px, transparent 2px),
-      linear-gradient(135deg, rgba(210, 43, 43, 0.06), transparent 38%),
-      linear-gradient(315deg, rgba(43, 43, 43, 0.06), transparent 32%);
-    background-size: 36px 36px, 100% 100%;
-    pointer-events: none;
+    background: var(--color-cream);
   }
 
   button,
@@ -75,12 +70,7 @@
 @layer components {
   .club-sidebar {
     position: relative;
-    background:
-      linear-gradient(90deg, rgba(255, 244, 216, 0.12) 2px, transparent 2px),
-      linear-gradient(rgba(255, 244, 216, 0.10) 2px, transparent 2px),
-      #006400;
-    background-size: 52px 52px;
-    box-shadow: inset -6px 0 0 #073b2a;
+    background: var(--color-deep-green);
   }
 
   .page-stack {
@@ -89,47 +79,47 @@
 
   .page-title {
     @apply rounded-xl border-3 border-deep-green bg-warm-white p-5;
-    box-shadow: 4px 4px 0 #063b22;
   }
 
   .club-header {
-    box-shadow: 0 4px 0 rgba(7, 59, 42, 0.18);
+    box-shadow: none;
   }
 
   .club-logo-title {
-    font-family: "Bungee Shade", "Baloo 2", system-ui, sans-serif;
-    letter-spacing: 0;
+    font-family: "Anton", "Arial Black", sans-serif;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
   }
 
   .club-mark {
-    box-shadow: 3px 3px 0 #073b2a;
+    box-shadow: none;
   }
 
   .sidebar-profile {
-    box-shadow: 4px 4px 0 #073b2a;
+    box-shadow: none;
   }
 
   .retro-button {
-    @apply inline-flex items-center rounded-lg border-3 border-deep-green px-4 py-2 font-black transition-transform duration-150 disabled:cursor-not-allowed disabled:opacity-60;
-    box-shadow: 4px 4px 0 #073b2a;
+    @apply inline-flex items-center rounded-lg border-3 border-deep-green px-4 py-2 font-black transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .retro-button:hover:not(:disabled) {
-    box-shadow: 5px 5px 0 #073b2a;
+    transform: translateY(-1px);
+    filter: brightness(1.06);
   }
 
   .retro-button:active:not(:disabled) {
-    transform: translate(2px, 2px);
-    box-shadow: 2px 2px 0 #073b2a;
+    transform: translateY(0) scale(0.97);
+    filter: brightness(0.98);
   }
 
   .retro-button:focus-visible,
   .form-input:focus-visible,
   .nav-item:focus-visible,
-  .mobile-bottom-nav a:focus-visible,
+  .mobile-bottom-nav button:focus-visible,
   .segmented-control button:focus-visible,
   .score-stepper button:focus-visible {
-    outline: 3px solid #ffd700;
+    outline: 3px solid var(--color-deep-green);
     outline-offset: 3px;
   }
 
@@ -138,7 +128,7 @@
   }
 
   .retro-button-secondary {
-    @apply bg-warm-white text-deep-green;
+    @apply border-net-line bg-warm-white text-deep-green;
   }
 
   .retro-button-highlight {
@@ -151,33 +141,33 @@
 
   .retro-panel {
     @apply rounded-xl border-2 border-net-line bg-warm-white;
-    box-shadow: 2px 2px 0 rgba(7, 59, 42, 0.14);
   }
 
   .retro-panel-strong {
     @apply rounded-xl border-3 border-deep-green bg-warm-white;
-    box-shadow: 4px 4px 0 #073b2a;
+    box-shadow: 0 4px 14px rgba(18, 38, 28, 0.1);
   }
 
   .badge {
     @apply inline-flex items-center rounded-lg border-2 px-2.5 py-1 text-xs font-black uppercase leading-none;
+    letter-spacing: 0.02em;
   }
 
   .badge-theme {
-    @apply border-deep-green bg-clay-red text-warm-white;
+    @apply border-deep-green bg-deep-green text-pickle-yellow;
   }
 
   .badge-provisional {
     @apply border-deep-green text-deep-green;
-    background: #efe9da;
+    background: var(--color-soft-grey);
   }
 
   .badge-win {
-    @apply border-deep-green bg-grass-green text-cream;
+    @apply border-deep-green bg-grass-green text-warm-white;
   }
 
   .badge-loss {
-    @apply border-deep-green bg-clay-red text-cream;
+    @apply border-deep-green bg-clay-red text-warm-white;
   }
 
   .badge-rank {
@@ -190,27 +180,13 @@
 
   .score-display {
     @apply rounded-xl border-3 border-deep-green bg-deep-green font-display leading-none;
-    color: #ffd700;
-    box-shadow: inset 0 0 0 3px #006400;
+    color: var(--color-pickle-yellow);
+    box-shadow: inset 0 0 0 3px var(--color-court-green);
   }
 
   .court-scorecard {
     position: relative;
-    overflow: hidden;
-    background:
-      linear-gradient(90deg, transparent 49%, rgba(7, 59, 42, 0.10) 49% 51%, transparent 51%),
-      linear-gradient(rgba(216, 197, 155, 0.45) 1px, transparent 1px),
-      #fffbf0;
-    background-size: 100% 100%, 32px 32px;
-  }
-
-  .court-scorecard::before {
-    position: absolute;
-    inset: 12px;
-    border: 3px solid rgba(15, 93, 59, 0.12);
-    border-radius: 10px;
-    content: "";
-    pointer-events: none;
+    background: var(--color-warm-white);
   }
 
   .court-scorecard > * {
@@ -219,12 +195,10 @@
 
   .side-score-panel {
     @apply rounded-xl border-3 border-deep-green bg-cream p-3;
-    box-shadow: 3px 3px 0 #073b2a;
   }
 
   .vs-medallion {
-    box-shadow: 3px 3px 0 #073b2a;
-    transform: rotate(-3deg);
+    box-shadow: none;
   }
 
   .form-input {
@@ -232,7 +206,7 @@
   }
 
   .form-input:focus {
-    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.48);
+    box-shadow: 0 0 0 4px rgba(203, 255, 61, 0.45);
   }
 
   .score-stepper {
@@ -240,13 +214,13 @@
   }
 
   .score-stepper button {
-    @apply grid place-items-center text-deep-green transition-transform duration-150;
-    background: #ffd700;
+    @apply grid place-items-center text-deep-green transition-colors duration-150;
+    background: var(--color-pickle-yellow);
   }
 
   .score-stepper button:hover {
-    background: #2b2b2b;
-    color: #fffbf0;
+    background: var(--color-deep-green);
+    color: var(--color-warm-white);
   }
 
   .score-stepper button:active {
@@ -266,7 +240,7 @@
   }
 
   .segmented-control button {
-    @apply min-w-0 rounded-lg px-2 py-2 text-sm font-black text-deep-green transition-transform duration-150 sm:px-3 sm:text-base;
+    @apply min-w-0 rounded-lg px-2 py-2 text-sm font-black text-deep-green transition-colors duration-150 sm:px-3 sm:text-base;
   }
 
   .segmented-control button:hover {
@@ -274,46 +248,27 @@
   }
 
   .segmented-control button.is-active {
-    @apply text-warm-white;
-    background: #2b2b2b;
-    box-shadow: inset 0 0 0 2px #073b2a;
+    @apply text-pickle-yellow;
+    background: var(--color-deep-green);
   }
 
   .theme-strip {
-    @apply rounded-xl border-3 border-deep-green bg-clay-red p-4 text-warm-white;
-    box-shadow: 4px 4px 0 #073b2a;
-    transform: rotate(-0.35deg);
+    @apply rounded-xl border-3 border-deep-green bg-pickle-yellow p-4 text-deep-green;
   }
 
   .theme-strip .badge-theme {
-    background: #ffd700;
-    color: #063b22;
+    background: var(--color-deep-green);
+    color: var(--color-pickle-yellow);
   }
 
   .theme-strip,
   .theme-strip p,
   .theme-strip span {
-    color: #fffbf0;
-  }
-
-  .theme-strip::after {
-    display: block;
-    height: 7px;
-    margin-top: 12px;
-    border: 2px solid #063b22;
-    border-radius: 999px;
-    content: "";
-    background: repeating-linear-gradient(
-      90deg,
-      #2b2b2b 0 18px,
-      #ffd700 18px 36px,
-      #006400 36px 54px,
-      #fffdd0 54px 72px
-    );
+    color: var(--color-deep-green);
   }
 
   .nav-item {
-    @apply flex w-full items-center gap-3 rounded-lg border-3 border-transparent px-3 py-3 font-black text-warm-white transition-transform duration-150;
+    @apply flex w-full items-center gap-3 rounded-lg border-3 border-transparent px-3 py-3 font-black text-warm-white transition-colors duration-150;
   }
 
   a.nav-item {
@@ -322,14 +277,11 @@
 
   .nav-item:hover {
     @apply border-pickle-yellow text-warm-white;
-    background: #2b2b2b;
-    transform: translateX(3px);
+    background: rgba(255, 255, 255, 0.08);
   }
 
   .nav-item.is-active {
-    @apply border-deep-green bg-clay-red text-warm-white;
-    box-shadow: 4px 4px 0 #073b2a;
-    transform: rotate(-1deg);
+    @apply border-deep-green bg-pickle-yellow text-deep-green;
   }
 
   .mobile-bottom-nav {
@@ -337,99 +289,86 @@
     padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
   }
 
-  .mobile-bottom-nav a {
-    @apply flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-transparent px-1 py-2 text-xs font-black text-warm-white transition-transform duration-150;
+  .mobile-bottom-nav button {
+    @apply flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-transparent px-1 py-2 font-black text-warm-white transition-colors duration-150;
+    font-size: 10px;
+    letter-spacing: -0.01em;
   }
 
-  .mobile-bottom-nav a:hover {
+  .mobile-bottom-nav button span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-bottom-nav button:hover {
     @apply text-warm-white;
-    background: #2b2b2b;
+    background: rgba(255, 255, 255, 0.1);
   }
 
-  .mobile-bottom-nav a.is-active {
-    @apply border-deep-green bg-clay-red text-warm-white;
-    transform: translateY(-3px);
+  .mobile-bottom-nav button.is-active {
+    @apply border-deep-green bg-pickle-yellow text-deep-green;
   }
 
   .leaderboard-row {
-    @apply flex items-center gap-3 rounded-lg border-2 border-net-line bg-cream p-3 transition-transform duration-150;
+    @apply flex items-center gap-3 rounded-lg border-2 border-net-line bg-cream p-3 transition-colors duration-150;
   }
 
   .leaderboard-row:hover {
     @apply border-deep-green bg-warm-white;
-    transform: translateY(-1px);
   }
 
   .leaderboard-row.is-podium {
     @apply border-deep-green bg-warm-white;
-    box-shadow: 3px 3px 0 rgba(7, 59, 42, 0.25);
-  }
-
-  .leaderboard-row.is-podium:nth-child(1) {
-    box-shadow:
-      inset 6px 0 0 #d22b2b,
-      3px 3px 0 rgba(7, 59, 42, 0.25);
-  }
-
-  .leaderboard-row.is-podium:nth-child(2) {
-    box-shadow:
-      inset 6px 0 0 #2b2b2b,
-      3px 3px 0 rgba(7, 59, 42, 0.25);
-  }
-
-  .leaderboard-row.is-podium:nth-child(3) {
-    box-shadow:
-      inset 6px 0 0 #006400,
-      3px 3px 0 rgba(7, 59, 42, 0.25);
+    box-shadow: inset 4px 0 0 var(--color-pickle-yellow);
   }
 
   .match-card {
     @apply flex flex-col gap-3 rounded-lg border-2 border-net-line bg-cream p-3 sm:flex-row;
-    box-shadow: inset 5px 0 0 #2b2b2b;
+    box-shadow: inset 3px 0 0 var(--color-net-line);
   }
 
   .match-card.is-selected {
     @apply border-deep-green bg-warm-white;
-    box-shadow:
-      inset 5px 0 0 #ffd700,
-      3px 3px 0 #073b2a;
+    box-shadow: inset 3px 0 0 var(--color-pickle-yellow);
   }
 
   .court-lines {
     position: absolute;
     inset: 16px;
-    border: 3px solid rgba(7, 59, 42, 0.16);
-    border-radius: 12px;
+    border: 2px solid rgba(18, 38, 28, 0.12);
+    border-radius: 10px;
   }
 
   .court-lines::before,
   .court-lines::after {
     position: absolute;
     content: "";
-    background: rgba(7, 59, 42, 0.16);
+    background: rgba(18, 38, 28, 0.12);
   }
 
   .court-lines::before {
     top: 50%;
     left: 0;
     width: 100%;
-    height: 3px;
+    height: 2px;
   }
 
   .court-lines::after {
     top: 0;
     left: 50%;
-    width: 3px;
+    width: 2px;
     height: 100%;
   }
 
   .court-lines-sidebar {
     inset: 18px;
-    border-color: rgba(255, 215, 0, 0.20);
+    border-color: rgba(203, 255, 61, 0.22);
   }
 
   .court-lines-sidebar::before,
   .court-lines-sidebar::after {
-    background: rgba(255, 215, 0, 0.20);
+    background: rgba(203, 255, 61, 0.22);
   }
 }
