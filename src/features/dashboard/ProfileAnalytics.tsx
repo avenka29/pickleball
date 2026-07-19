@@ -2,7 +2,6 @@ import { Activity, LineChart, TrendingDown, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "../../components/Badge";
 import { RetroPanel } from "../../components/RetroPanel";
-import { TrendSvg } from "../../components/TrendSvg";
 import { getTrackRating, getTrackRecord, useRatingTrend } from "./api";
 import type { RankingTrack, TrackableProfile } from "./types";
 
@@ -22,7 +21,7 @@ export function ProfileAnalytics({ profile, track }: ProfileAnalyticsProps) {
   const latestDelta = recent.length > 0 ? recent[recent.length - 1]?.elo_delta ?? null : null;
 
   return (
-    <RetroPanel className="p-5">
+    <RetroPanel className="analytics-cabinet p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 font-display text-2xl text-deep-green">
           <Activity size={23} />
@@ -39,7 +38,7 @@ export function ProfileAnalytics({ profile, track }: ProfileAnalyticsProps) {
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_160px] sm:items-stretch">
-        <div className="rounded-lg border-2 border-net-line bg-cream p-3">
+        <div className="chart-screen rounded-lg border-3 border-deep-green bg-cream p-3">
           <div className="mb-2 flex items-center justify-between gap-3">
             <p className="flex items-center gap-2 text-sm font-black uppercase text-court-green">
               <LineChart size={16} />
@@ -50,7 +49,7 @@ export function ProfileAnalytics({ profile, track }: ProfileAnalyticsProps) {
           <TrendSvg points={recent.map((point, index) => point.elo_after ?? point.rating ?? point.elo_before ?? 1200 + index)} />
         </div>
 
-        <div className="rounded-lg border-2 border-net-line bg-warm-white p-3">
+        <div className="stat-cartridge bg-warm-white">
           <p className="text-sm font-black uppercase text-court-green">Recent form</p>
           <div className="mt-3 flex gap-2">
             {recent.slice(-6).map((point, index) => (
@@ -72,9 +71,9 @@ export function ProfileAnalytics({ profile, track }: ProfileAnalyticsProps) {
 
 function RatingStat({ label, value, record }: { label: string; value: string | number; record: string }) {
   return (
-    <div className="rounded-lg border-2 border-net-line bg-cream p-3">
+    <div className="stat-cartridge">
       <p className="text-xs font-black uppercase text-court-green">{label}</p>
-      <div className="mt-1 font-mono text-3xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
+      <div className="mt-1 font-display text-3xl leading-none text-deep-green">{value}</div>
       <p className="mt-1 text-sm font-bold text-ink">{record} record</p>
     </div>
   );
@@ -82,10 +81,41 @@ function RatingStat({ label, value, record }: { label: string; value: string | n
 
 function MiniStat({ label, value, icon }: { label: string; value: number; icon: ReactNode }) {
   return (
-    <div className="rounded-lg border-2 border-net-line bg-cream p-2">
+    <div className="mini-cartridge">
       <div className="text-court-green">{icon}</div>
-      <div className="font-mono text-xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
+      <div className="font-display text-xl leading-none text-deep-green">{value}</div>
       <div className="text-xs font-black uppercase text-ink">{label}</div>
     </div>
+  );
+}
+
+function TrendSvg({ points }: { points: number[] }) {
+  if (points.length < 2) {
+    return <div className="grid h-28 place-items-center rounded-lg border-3 border-dashed border-deep-green bg-warm-white p-3 text-center font-bold text-ink">Trend starts after two rated matches.</div>;
+  }
+
+  const width = 320;
+  const height = 112;
+  const min = Math.min(...points);
+  const max = Math.max(...points);
+  const spread = Math.max(1, max - min);
+  const path = points
+    .map((point, index) => {
+      const x = (index / Math.max(1, points.length - 1)) * width;
+      const y = height - ((point - min) / spread) * (height - 18) - 9;
+      return `${index === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  return (
+    <svg className="h-28 w-full rounded-lg border-3 border-deep-green bg-warm-white" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Rating trend">
+      <path d="M0 84 H320 M0 56 H320 M0 28 H320" stroke="#D8C59B" strokeWidth="2" />
+      <path d={path} fill="none" stroke="#006400" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" />
+      {points.map((point, index) => {
+        const x = (index / Math.max(1, points.length - 1)) * width;
+        const y = height - ((point - min) / spread) * (height - 18) - 9;
+        return <circle key={`${point}-${index}`} cx={x} cy={y} r="4" fill="#E4B83A" stroke="#063B22" strokeWidth="2" />;
+      })}
+    </svg>
   );
 }

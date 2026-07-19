@@ -1,9 +1,7 @@
 import { Activity, TrendingDown, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "../../components/Badge";
-import { CourtDiagram } from "../../components/CourtDiagram";
 import { RetroPanel } from "../../components/RetroPanel";
-import { useCountUp } from "../../lib/useCountUp";
 import { getTrackRating, getTrackRecord } from "./api";
 import type { TrackableProfile } from "./types";
 
@@ -15,8 +13,6 @@ export function RatingCard({ profile }: RatingCardProps) {
   const matchesPlayed = profile?.matches_played ?? 0;
   const singlesRating = getTrackRating(profile, "singles");
   const doublesRating = getTrackRating(profile, "doubles");
-  const displaySinglesRating = useCountUp(singlesRating);
-  const displayDoublesRating = useCountUp(doublesRating);
   const singlesRecord = getTrackRecord(profile, "singles");
   const doublesRecord = getTrackRecord(profile, "doubles");
   const isProvisional = !singlesRating || matchesPlayed < 3;
@@ -24,9 +20,8 @@ export function RatingCard({ profile }: RatingCardProps) {
   const winRate = matchesPlayed > 0 ? Math.round(((profile?.wins ?? 0) / matchesPlayed) * 100) : 0;
 
   return (
-    <RetroPanel strong spotlight className="relative overflow-hidden p-5">
-      <CourtDiagram className="court-diagram-watermark" />
-      <div className="relative flex flex-wrap items-start justify-between gap-4">
+    <RetroPanel strong className="player-card p-5">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-black uppercase text-court-green">Your rating</p>
           <h2 className="mt-1 font-display text-3xl text-deep-green">
@@ -56,11 +51,11 @@ export function RatingCard({ profile }: RatingCardProps) {
           <div className="flex flex-wrap items-end gap-3">
             <div>
               <p className="mb-1 text-xs font-black uppercase text-court-green">Singles</p>
-              <div className="score-display px-5 py-3 text-6xl tabular-nums">{displaySinglesRating}</div>
+              <div className="score-display px-5 py-3 text-6xl">{singlesRating}</div>
             </div>
             <div>
               <p className="mb-1 text-xs font-black uppercase text-court-green">Doubles</p>
-              <div className="score-display bg-court-green px-4 py-3 text-3xl tabular-nums">{displayDoublesRating ?? "Prov."}</div>
+              <div className="score-display bg-court-green px-4 py-3 text-3xl">{doublesRating ?? "Prov."}</div>
             </div>
             <Badge tone="win" className="mb-2 gap-1">
               <TrendingUp size={14} />
@@ -81,9 +76,9 @@ export function RatingCard({ profile }: RatingCardProps) {
 
 function Stat({ label, value, icon }: { label: string; value: string | number; icon: ReactNode }) {
   return (
-    <div className="rounded-lg border-2 border-net-line bg-cream p-3">
+    <div className="stat-cartridge">
       <div className="flex items-center gap-1 text-court-green">{icon}</div>
-      <div className="mt-2 font-mono text-2xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
+      <div className="mt-2 font-display text-2xl leading-none text-deep-green">{value}</div>
       <div className="mt-1 text-xs font-black uppercase text-ink">{label}</div>
     </div>
   );

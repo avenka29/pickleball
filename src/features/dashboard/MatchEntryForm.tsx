@@ -72,14 +72,29 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
   };
 
   return (
-    <RetroPanel strong className="court-scorecard p-5">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-2xl text-deep-green">Record match</h2>
+    <RetroPanel strong className="score-terminal court-scorecard p-5">
+      <div className="terminal-marquee mb-5">
+        <div>
+          <p className="text-xs font-black uppercase text-pickle-yellow">Score terminal</p>
+          <h2 className="font-display text-4xl leading-none text-warm-white">Record Match</h2>
+        </div>
         <Badge tone={activeTheme ? "theme" : "neutral"}>{activeTheme?.name ?? "Standard Elo"}</Badge>
       </div>
 
+      <div className="score-readout-row mb-5">
+        <div className={`side-ticket ${winnerSide === "a" ? "is-winner" : ""}`}>
+          <span>Side A</span>
+          <strong>{sideAScore}</strong>
+        </div>
+        <div className="readout-vs">VS</div>
+        <div className={`side-ticket ${winnerSide === "b" ? "is-winner" : ""}`}>
+          <span>Side B</span>
+          <strong>{sideBScore}</strong>
+        </div>
+      </div>
+
       <form className="space-y-5" onSubmit={submitMatch}>
-        <div>
+        <div className="terminal-section">
           <p className="mb-2 flex items-center gap-2 text-sm font-black uppercase text-court-green">
             <Users size={16} />
             Match mode
@@ -118,7 +133,7 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
           </div>
         ) : null}
 
-        <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
+        <div className="match-versus-grid">
           <PlayerScoreBlock
             label="Side A"
             playerId={sideAPlayer}

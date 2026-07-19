@@ -1,4 +1,4 @@
-import { LayoutDashboard, LogOut, Medal, Shield, Swords, Trophy } from "lucide-react";
+import { History, Home, LogOut, Medal, Shield, Swords, Trophy } from "lucide-react";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { CourtDiagram } from "../../components/CourtDiagram";
@@ -14,10 +14,11 @@ type AppShellProps = {
 };
 
 const playerNav = [
-  { label: "Dashboard", icon: LayoutDashboard, pageId: "dashboard" },
-  { label: "Leaderboard", icon: Medal, pageId: "leaderboard" },
-  { label: "Matches", icon: Swords, pageId: "matches" },
-  { label: "Tournaments", icon: Trophy, pageId: "tournaments" },
+  { label: "Clubhouse", icon: Home, pageId: "home" },
+  { label: "Score It", icon: Swords, pageId: "record" },
+  { label: "Ladder", icon: Medal, pageId: "rankings" },
+  { label: "Replay", icon: History, pageId: "history" },
+  { label: "Bracket", icon: Trophy, pageId: "tournaments" },
 ];
 
 function PaddleMark({ size }: { size: number }) {
@@ -42,7 +43,7 @@ export function AppShell({ profile, children, activePage, onPageChange }: AppShe
   );
 
   return (
-    <div className="min-h-screen bg-cream text-ink lg:grid lg:grid-cols-[264px_1fr]">
+    <div className="app-arcade min-h-screen bg-cream text-ink lg:grid lg:grid-cols-[288px_1fr]">
       <aside className="club-sidebar hidden min-h-screen overflow-hidden p-5 text-warm-white lg:sticky lg:top-0 lg:block">
         <CourtDiagram className="court-diagram-sidebar" />
 
@@ -53,6 +54,9 @@ export function AppShell({ profile, children, activePage, onPageChange }: AppShe
           <div>
             <div className="club-logo-title text-3xl leading-none">Pickle</div>
             <div className="club-logo-title text-3xl leading-none">Club</div>
+            <div className="mt-1 inline-block rounded-full border-2 border-pickle-yellow bg-dark-grey px-2 py-0.5 text-[10px] font-black uppercase text-pickle-yellow">
+              Insert match
+            </div>
           </div>
         </div>
 
@@ -71,10 +75,15 @@ export function AppShell({ profile, children, activePage, onPageChange }: AppShe
           ))}
         </nav>
 
-        <div className="sidebar-profile relative mt-8 rounded-xl border-3 border-pickle-yellow bg-deep-green p-4">
+        <div className="cabinet-ledger relative mt-8 rounded-xl border-3 border-pickle-yellow bg-deep-green p-4">
           <p className="text-xs font-black uppercase text-pickle-yellow">Signed in</p>
           <p className="mt-1 truncate font-black text-warm-white">{profile?.display_name ?? profile?.email ?? "Club player"}</p>
           <p className="mt-2 text-xs font-bold text-cream/80">Private court access</p>
+          <div className="cabinet-lights" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
         </div>
       </aside>
 
@@ -88,7 +97,7 @@ export function AppShell({ profile, children, activePage, onPageChange }: AppShe
               <div className="club-logo-title text-2xl text-deep-green">Pickle Club</div>
             </div>
             <div className="hidden lg:block">
-              <p className="text-sm font-black uppercase text-court-green">Clubhouse ladder</p>
+              <p className="text-sm font-black uppercase text-clay-red">Clubhouse cartridge loaded</p>
               <h1 className="font-display text-4xl leading-none text-deep-green">Record the rally</h1>
             </div>
             <div className="flex items-center gap-3">
@@ -107,10 +116,12 @@ export function AppShell({ profile, children, activePage, onPageChange }: AppShe
           </div>
         </header>
 
-        {children}
+        <div className="cabinet-screen">
+          {children}
+        </div>
       </div>
 
-      <nav className={`mobile-bottom-nav ${navItems.length === 5 ? "grid-cols-5" : "grid-cols-4"} lg:hidden`} aria-label="App pages">
+      <nav className={`mobile-bottom-nav ${navItems.length === 6 ? "grid-cols-6" : "grid-cols-5"} lg:hidden`} aria-label="App pages">
         {navItems.map((item) => (
           <button
             key={item.label}

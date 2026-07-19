@@ -85,7 +85,7 @@ export function AdminControls({ players }: AdminControlsProps) {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">
-        <form className="space-y-3 rounded-lg border-2 border-net-line bg-cream p-3" onSubmit={submitUser}>
+        <form className="admin-cartridge" onSubmit={submitUser}>
           <h3 className="font-display text-xl text-deep-green">User management</h3>
           <input className="form-input" type="email" placeholder="player@example.com" value={email} onChange={(event) => setEmail(event.target.value)} required />
           <select className="form-input" value={roleOnSignup} onChange={(event) => setRoleOnSignup(event.target.value as "player" | "admin")}>
@@ -100,7 +100,7 @@ export function AdminControls({ players }: AdminControlsProps) {
           {addUser.error ? <p className="text-sm font-black text-clay-red">{addUser.error.message}</p> : null}
         </form>
 
-        <form className="space-y-3 rounded-lg border-2 border-net-line bg-cream p-3" onSubmit={submitElo}>
+        <form className="admin-cartridge" onSubmit={submitElo}>
           <h3 className="font-display text-xl text-deep-green">Elo override</h3>
           <select className="form-input" value={playerId} onChange={(event) => setPlayerId(event.target.value)} required>
             <option value="">Select player</option>
@@ -126,7 +126,7 @@ export function AdminControls({ players }: AdminControlsProps) {
           {overrideElo.error ? <p className="text-sm font-black text-clay-red">{overrideElo.error.message}</p> : null}
         </form>
 
-        <form className="space-y-3 rounded-lg border-2 border-net-line bg-cream p-3" onSubmit={submitTheme}>
+        <form className="admin-cartridge" onSubmit={submitTheme}>
           <h3 className="font-display text-xl text-deep-green">Theme config</h3>
           <select className="form-input" value={themeId || selectedTheme?.id || ""} onChange={(event) => loadTheme(event.target.value)} disabled={!themes.data?.length}>
             {(themes.data ?? []).map((theme) => (

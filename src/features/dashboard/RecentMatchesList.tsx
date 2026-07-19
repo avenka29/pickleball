@@ -10,14 +10,14 @@ type RecentMatchesListProps = {
   isLoading: boolean;
   selectedMatchId?: string | null;
   onViewMatch?: (match: RecentMatch) => void;
-  onSelectPlayer?: (playerId: string) => void;
+  compact?: boolean;
 };
 
-export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewMatch, onSelectPlayer }: RecentMatchesListProps) {
+export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewMatch, compact = false }: RecentMatchesListProps) {
   return (
-    <RetroPanel className="p-5">
+    <RetroPanel className={`${compact ? "history-preview" : ""} p-5`}>
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="font-display text-2xl text-deep-green">Recent matches</h2>
+        <h2 className="font-display text-2xl text-deep-green">{compact ? "Recent feed" : "Recent matches"}</h2>
         <Badge tone="neutral">{matches.length} shown</Badge>
       </div>
 
@@ -38,34 +38,17 @@ export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewM
       ) : null}
 
       <div className="space-y-3">
-        {matches.map((match, index) => (
-          <article
-            key={match.id}
-            id={`match-${match.id}`}
-            className={`match-card row-reveal ${selectedMatchId === match.id ? "is-selected" : ""}`}
-            style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
-          >
+        {matches.map((match) => (
+          <article key={match.id} id={`match-${match.id}`} className={`match-card ${selectedMatchId === match.id ? "is-selected" : ""}`}>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <Trophy size={17} className="text-grass-green" />
-                {match.winner?.id && onSelectPlayer ? (
-                  <button type="button" className="player-link" onClick={() => onSelectPlayer(match.winner!.id)}>
-                    {match.winner?.display_name ?? "Winner"}
-                  </button>
-                ) : (
-                  <p className="font-black text-deep-green">{match.winner?.display_name ?? "Winner"}</p>
-                )}
+                <p className="font-black text-deep-green">{match.winner?.display_name ?? "Winner"}</p>
                 <span className="font-bold text-ink">def.</span>
-                {match.loser?.id && onSelectPlayer ? (
-                  <button type="button" className="player-link" onClick={() => onSelectPlayer(match.loser!.id)}>
-                    {match.loser?.display_name ?? "Loser"}
-                  </button>
-                ) : (
-                  <p className="font-bold text-ink">{match.loser?.display_name ?? "Loser"}</p>
-                )}
+                <p className="font-bold text-ink">{match.loser?.display_name ?? "Loser"}</p>
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-bold text-ink">
-                <span className="font-mono tabular-nums">
+                <span>
                   {match.winner_score ?? "-"}-{match.loser_score ?? "-"}
                 </span>
                 <span className="inline-flex items-center gap-1">
@@ -89,14 +72,21 @@ export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewM
                 </dl>
               ) : null}
             </div>
-            <RetroButton
-              type="button"
-              variant={selectedMatchId === match.id ? "highlight" : "secondary"}
-              className="self-start px-3 py-2 text-sm"
-              onClick={() => onViewMatch?.(match)}
-            >
-              Details
-            </RetroButton>
+            {compact ? null : (
+              <RetroButton
+                type="button"
+                variant={selectedMatchId === match.id ? "highlight" : "secondary"}
+                className="self-start px-3 py-2 text-sm"
+                onClick={() => onViewMatch?.(match)}
+              >
+                Details
+              </RetroButton>
+            )}
+            {compact ? (
+              <button type="button" className="match-link" onClick={() => onViewMatch?.(match)}>
+                View
+              </button>
+            ) : null}
           </article>
         ))}
       </div>
