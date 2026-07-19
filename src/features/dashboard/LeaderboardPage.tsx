@@ -144,7 +144,7 @@ export function LeaderboardPage({ players, isLoading, track, onTrackChange, onSe
                       : `${record.wins}-${record.losses} ${track} record`}
                   </p>
                 </span>
-                <span className="font-mono text-2xl font-bold tabular-nums text-deep-green">{rating ?? "—"}</span>
+                <span className="font-display text-2xl text-deep-green">{rating ?? "—"}</span>
                 <ChevronRight size={18} className="text-court-green transition-transform duration-150 group-hover:translate-x-0.5" />
               </button>
             </li>

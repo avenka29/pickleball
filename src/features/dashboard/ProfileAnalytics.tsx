@@ -74,7 +74,7 @@ function RatingStat({ label, value, record }: { label: string; value: string | n
   return (
     <div className="rounded-lg border-2 border-net-line bg-cream p-3">
       <p className="text-xs font-black uppercase text-court-green">{label}</p>
-      <div className="mt-1 font-mono text-3xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
+      <div className="mt-1 font-display text-3xl leading-none text-deep-green">{value}</div>
       <p className="mt-1 text-sm font-bold text-ink">{record} record</p>
     </div>
   );
@@ -84,7 +84,7 @@ function MiniStat({ label, value, icon }: { label: string; value: number; icon: 
   return (
     <div className="rounded-lg border-2 border-net-line bg-cream p-2">
       <div className="text-court-green">{icon}</div>
-      <div className="font-mono text-xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
+      <div className="font-display text-xl leading-none text-deep-green">{value}</div>
       <div className="text-xs font-black uppercase text-ink">{label}</div>
     </div>
   );

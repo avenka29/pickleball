@@ -56,11 +56,11 @@ export function RatingCard({ profile }: RatingCardProps) {
           <div className="flex flex-wrap items-end gap-3">
             <div>
               <p className="mb-1 text-xs font-black uppercase text-court-green">Singles</p>
-              <div className="score-display px-5 py-3 text-6xl tabular-nums">{displaySinglesRating}</div>
+              <div className="score-display px-5 py-3 text-6xl">{displaySinglesRating}</div>
             </div>
             <div>
               <p className="mb-1 text-xs font-black uppercase text-court-green">Doubles</p>
-              <div className="score-display bg-court-green px-4 py-3 text-3xl tabular-nums">{displayDoublesRating ?? "Prov."}</div>
+              <div className="score-display bg-court-green px-4 py-3 text-3xl">{displayDoublesRating ?? "Prov."}</div>
             </div>
             <Badge tone="win" className="mb-2 gap-1">
               <TrendingUp size={14} />
@@ -83,7 +83,7 @@ function Stat({ label, value, icon }: { label: string; value: string | number; i
   return (
     <div className="rounded-lg border-2 border-net-line bg-cream p-3">
       <div className="flex items-center gap-1 text-court-green">{icon}</div>
-      <div className="mt-2 font-mono text-2xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
+      <div className="mt-2 font-display text-2xl leading-none text-deep-green">{value}</div>
       <div className="mt-1 text-xs font-black uppercase text-ink">{label}</div>
     </div>
   );

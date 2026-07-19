@@ -65,7 +65,7 @@ export function LeaderboardPreview({ players, isLoading, track, onTrackChange, o
                   {getTrackRecord(player, track).wins}-{getTrackRecord(player, track).losses} {track} record
                 </p>
               </div>
-              <div className="font-mono text-2xl font-bold tabular-nums text-deep-green">{getTrackRating(player, track)}</div>
+              <div className="font-display text-2xl text-deep-green">{getTrackRating(player, track)}</div>
             </button>
           </li>
         ))}

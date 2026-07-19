@@ -108,7 +108,7 @@ export function PlayerProfileModal({ player, track, onClose }: PlayerProfileModa
                       </p>
                     </div>
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-bold text-ink">
-                      <span className="font-mono tabular-nums">
+                      <span>
                         {match.winner_score ?? "-"}-{match.loser_score ?? "-"}
                       </span>
                       <span className="inline-flex items-center gap-1">
@@ -131,7 +131,7 @@ export function PlayerProfileModal({ player, track, onClose }: PlayerProfileModa
 function MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border-2 border-net-line bg-cream p-3 text-center">
-      <div className="font-mono text-xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
+      <div className="font-display text-xl leading-none text-deep-green">{value}</div>
       <div className="mt-1 text-xs font-black uppercase text-ink">{label}</div>
     </div>
   );

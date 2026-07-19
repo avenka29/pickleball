@@ -65,7 +65,7 @@ export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewM
                 )}
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-bold text-ink">
-                <span className="font-mono tabular-nums">
+                <span>
                   {match.winner_score ?? "-"}-{match.loser_score ?? "-"}
                 </span>
                 <span className="inline-flex items-center gap-1">
