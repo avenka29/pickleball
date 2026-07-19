@@ -31,7 +31,16 @@ export function LeaderboardPreview({ players, isLoading, track, onTrackChange }:
         </button>
       </div>
 
-      {isLoading ? <p className="font-bold text-ink">Loading rankings...</p> : null}
+      {isLoading ? (
+        <div>
+          <span className="sr-only">Loading rankings...</span>
+          <div className="space-y-3" aria-hidden="true">
+            <div className="skeleton h-14" />
+            <div className="skeleton h-14" />
+            <div className="skeleton h-14" />
+          </div>
+        </div>
+      ) : null}
       {!isLoading && players.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-net-line bg-cream p-4 font-bold text-ink">
           No ranked players yet. Ratings appear after provisional matches are complete.

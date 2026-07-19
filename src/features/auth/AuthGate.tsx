@@ -18,7 +18,18 @@ export function AuthGate({ children }: AuthGateProps) {
   const signOut = useSignOut();
 
   if (sessionQuery.isLoading) {
-    return <div className="grid min-h-screen place-items-center bg-cream text-deep-green">Loading clubhouse...</div>;
+    return (
+      <div className="grid min-h-screen place-items-center bg-cream text-deep-green">
+        <div className="flex flex-col items-center gap-4">
+          <div className="loading-dots" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          <p className="font-black uppercase tracking-wide">Loading clubhouse...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!session) {
@@ -41,6 +52,14 @@ export function AuthGate({ children }: AuthGateProps) {
 
             <RetroPanel strong className="relative overflow-hidden p-6">
               <div className="court-lines" aria-hidden="true" />
+              <svg className="hero-ball" aria-hidden="true" viewBox="0 0 40 40" width="40" height="40">
+                <circle cx="20" cy="20" r="16" fill="var(--color-pickle-yellow)" stroke="var(--color-deep-green)" strokeWidth="2.5" />
+                <circle cx="14" cy="14" r="1.6" fill="var(--color-deep-green)" />
+                <circle cx="26" cy="14" r="1.6" fill="var(--color-deep-green)" />
+                <circle cx="20" cy="20" r="1.6" fill="var(--color-deep-green)" />
+                <circle cx="14" cy="26" r="1.6" fill="var(--color-deep-green)" />
+                <circle cx="26" cy="26" r="1.6" fill="var(--color-deep-green)" />
+              </svg>
               <div className="relative space-y-4">
                 <div className="score-display inline-flex px-5 py-3 text-5xl">1200</div>
                 <h2 className="font-display text-3xl text-deep-green">Tuesday night ranking</h2>

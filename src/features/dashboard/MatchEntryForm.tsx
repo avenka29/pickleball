@@ -162,7 +162,25 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
 
         {validationMessage ? <p className="rounded-lg border-2 border-clay-red bg-warm-white p-3 text-sm font-black text-clay-red">{validationMessage}</p> : null}
         {recordMatch.error ? <p className="rounded-lg border-2 border-clay-red bg-warm-white p-3 text-sm font-black text-clay-red">{recordMatch.error.message}</p> : null}
-        {lastResult ? <p className="rounded-lg border-2 border-grass-green bg-pickle-yellow p-3 text-sm font-black text-deep-green">{lastResult}</p> : null}
+        {lastResult ? (
+          <p className="relative overflow-visible rounded-lg border-2 border-grass-green bg-pickle-yellow p-3 text-sm font-black text-deep-green">
+            {lastResult}
+            <span className="confetti-burst" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+              <i />
+            </span>
+          </p>
+        ) : null}
 
         <RetroButton className="w-full justify-center gap-2 md:w-auto" disabled={Boolean(validationMessage) || recordMatch.isPending}>
           <Save size={18} />

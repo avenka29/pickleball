@@ -20,7 +20,16 @@ export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewM
         <Badge tone="neutral">{matches.length} shown</Badge>
       </div>
 
-      {isLoading ? <p className="font-bold text-ink">Loading match feed...</p> : null}
+      {isLoading ? (
+        <div>
+          <span className="sr-only">Loading match feed...</span>
+          <div className="space-y-3" aria-hidden="true">
+            <div className="skeleton h-20" />
+            <div className="skeleton h-20" />
+            <div className="skeleton h-20" />
+          </div>
+        </div>
+      ) : null}
       {!isLoading && matches.length === 0 ? (
         <div className="rounded-lg border-2 border-dashed border-net-line bg-cream p-4 font-bold text-ink">
           No matches recorded yet. The next scorecard starts the feed.

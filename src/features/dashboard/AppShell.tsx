@@ -1,4 +1,4 @@
-import { BarChart3, LayoutDashboard, LogOut, Medal, Shield, Swords, Trophy } from "lucide-react";
+import { LayoutDashboard, LogOut, Medal, Shield, Swords, Trophy } from "lucide-react";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { RetroButton } from "../../components/RetroButton";
@@ -19,6 +19,20 @@ const playerNav = [
   { label: "Tournaments", icon: Trophy, pageId: "tournaments" },
 ];
 
+function PaddleMark({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <rect x="13" y="19" width="6" height="10" rx="2.5" fill="currentColor" />
+      <ellipse cx="16" cy="12" rx="11" ry="12" fill="currentColor" />
+      <circle cx="16" cy="8" r="1.3" fill="var(--color-cream)" />
+      <circle cx="11" cy="12" r="1.3" fill="var(--color-cream)" />
+      <circle cx="21" cy="12" r="1.3" fill="var(--color-cream)" />
+      <circle cx="16" cy="16" r="1.3" fill="var(--color-cream)" />
+      <circle className="club-mark-ball" cx="26" cy="24" r="4.5" fill="var(--color-pickle-yellow)" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
 export function AppShell({ profile, children, activePage, onPageChange }: AppShellProps) {
   const signOut = useSignOut();
   const navItems = useMemo(
@@ -32,8 +46,8 @@ export function AppShell({ profile, children, activePage, onPageChange }: AppShe
         <div className="court-lines court-lines-sidebar" aria-hidden="true" />
 
         <div className="relative mb-8 flex items-center gap-3">
-          <div className="club-mark grid h-14 w-14 place-items-center rounded-full border-3 border-pickle-yellow bg-deep-green">
-            <BarChart3 size={28} />
+          <div className="club-mark grid h-14 w-14 place-items-center rounded-full border-3 border-pickle-yellow bg-deep-green text-pickle-yellow">
+            <PaddleMark size={28} />
           </div>
           <div>
             <div className="club-logo-title text-3xl leading-none">Pickle</div>
@@ -68,7 +82,7 @@ export function AppShell({ profile, children, activePage, onPageChange }: AppShe
           <div className="mx-auto flex max-w-dashboard items-center justify-between gap-3">
             <div className="flex items-center gap-3 lg:hidden">
               <div className="club-mark grid h-10 w-10 place-items-center rounded-full border-3 border-deep-green bg-pickle-yellow text-deep-green">
-                <BarChart3 size={22} />
+                <PaddleMark size={22} />
               </div>
               <div className="club-logo-title text-2xl text-deep-green">Pickle Club</div>
             </div>
