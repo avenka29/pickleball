@@ -1,6 +1,7 @@
 import { LogIn, LogOut } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "../../components/Badge";
+import { CourtDiagram } from "../../components/CourtDiagram";
 import { RetroButton } from "../../components/RetroButton";
 import { RetroPanel } from "../../components/RetroPanel";
 import { useCurrentProfile, useSessionQuery, useSignInWithGoogle, useSignOut } from "./api";
@@ -51,7 +52,7 @@ export function AuthGate({ children }: AuthGateProps) {
             </div>
 
             <RetroPanel strong className="relative overflow-hidden p-6">
-              <div className="court-lines" aria-hidden="true" />
+              <CourtDiagram className="court-diagram-watermark" />
               <svg className="hero-ball" aria-hidden="true" viewBox="0 0 40 40" width="40" height="40">
                 <circle cx="20" cy="20" r="16" fill="var(--color-pickle-yellow)" stroke="var(--color-deep-green)" strokeWidth="2.5" />
                 <circle cx="14" cy="14" r="1.6" fill="var(--color-deep-green)" />

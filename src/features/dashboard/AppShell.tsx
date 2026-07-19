@@ -1,6 +1,7 @@
 import { LayoutDashboard, LogOut, Medal, Shield, Swords, Trophy } from "lucide-react";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
+import { CourtDiagram } from "../../components/CourtDiagram";
 import { RetroButton } from "../../components/RetroButton";
 import { useSignOut } from "../auth/api";
 import type { Profile } from "./types";
@@ -28,7 +29,7 @@ function PaddleMark({ size }: { size: number }) {
       <circle cx="11" cy="12" r="1.3" fill="var(--color-cream)" />
       <circle cx="21" cy="12" r="1.3" fill="var(--color-cream)" />
       <circle cx="16" cy="16" r="1.3" fill="var(--color-cream)" />
-      <circle className="club-mark-ball" cx="26" cy="24" r="4.5" fill="var(--color-court-green)" stroke="currentColor" strokeWidth="1.5" />
+      <circle className="club-mark-ball" cx="26" cy="24" r="4.5" fill="var(--color-pickle-yellow)" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }
@@ -43,7 +44,7 @@ export function AppShell({ profile, children, activePage, onPageChange }: AppShe
   return (
     <div className="min-h-screen bg-cream text-ink lg:grid lg:grid-cols-[264px_1fr]">
       <aside className="club-sidebar hidden min-h-screen overflow-hidden p-5 text-warm-white lg:sticky lg:top-0 lg:block">
-        <div className="court-lines court-lines-sidebar" aria-hidden="true" />
+        <CourtDiagram className="court-diagram-sidebar" />
 
         <div className="relative mb-8 flex items-center gap-3">
           <div className="club-mark grid h-14 w-14 place-items-center rounded-full border-3 border-pickle-yellow bg-deep-green text-pickle-yellow">

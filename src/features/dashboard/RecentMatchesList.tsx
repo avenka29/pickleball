@@ -10,9 +10,10 @@ type RecentMatchesListProps = {
   isLoading: boolean;
   selectedMatchId?: string | null;
   onViewMatch?: (match: RecentMatch) => void;
+  onSelectPlayer?: (playerId: string) => void;
 };
 
-export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewMatch }: RecentMatchesListProps) {
+export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewMatch, onSelectPlayer }: RecentMatchesListProps) {
   return (
     <RetroPanel className="p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
@@ -37,17 +38,34 @@ export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewM
       ) : null}
 
       <div className="space-y-3">
-        {matches.map((match) => (
-          <article key={match.id} id={`match-${match.id}`} className={`match-card ${selectedMatchId === match.id ? "is-selected" : ""}`}>
+        {matches.map((match, index) => (
+          <article
+            key={match.id}
+            id={`match-${match.id}`}
+            className={`match-card row-reveal ${selectedMatchId === match.id ? "is-selected" : ""}`}
+            style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
+          >
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <Trophy size={17} className="text-grass-green" />
-                <p className="font-black text-deep-green">{match.winner?.display_name ?? "Winner"}</p>
+                {match.winner?.id && onSelectPlayer ? (
+                  <button type="button" className="player-link" onClick={() => onSelectPlayer(match.winner!.id)}>
+                    {match.winner?.display_name ?? "Winner"}
+                  </button>
+                ) : (
+                  <p className="font-black text-deep-green">{match.winner?.display_name ?? "Winner"}</p>
+                )}
                 <span className="font-bold text-ink">def.</span>
-                <p className="font-bold text-ink">{match.loser?.display_name ?? "Loser"}</p>
+                {match.loser?.id && onSelectPlayer ? (
+                  <button type="button" className="player-link" onClick={() => onSelectPlayer(match.loser!.id)}>
+                    {match.loser?.display_name ?? "Loser"}
+                  </button>
+                ) : (
+                  <p className="font-bold text-ink">{match.loser?.display_name ?? "Loser"}</p>
+                )}
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-bold text-ink">
-                <span>
+                <span className="font-mono tabular-nums">
                   {match.winner_score ?? "-"}-{match.loser_score ?? "-"}
                 </span>
                 <span className="inline-flex items-center gap-1">

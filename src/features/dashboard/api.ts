@@ -54,6 +54,7 @@ export const dashboardKeys = {
   leaderboard: ["dashboard", "leaderboard"] as const,
   leaderboardTrack: (track: RankingTrack, limit: number) => ["dashboard", "leaderboard", track, limit] as const,
   recentMatches: ["dashboard", "recent-matches"] as const,
+  playerMatches: (profileId?: string, limit = 10) => ["dashboard", "player-matches", profileId ?? "none", limit] as const,
   ratingTrend: (profileId?: string, track?: RankingTrack) => ["dashboard", "rating-trend", profileId ?? "none", track ?? "all"] as const,
   tournaments: ["dashboard", "tournaments"] as const,
   tournamentDetail: (id?: string) => ["dashboard", "tournament", id ?? "none"] as const,
@@ -137,6 +138,26 @@ export function useRecentMatches(limit = 6) {
         .select(
           "*,winner:profiles!matches_winner_id_fkey(id,display_name,avatar_url),loser:profiles!matches_loser_id_fkey(id,display_name,avatar_url),theme:themes(id,name,slug)",
         )
+        .order("played_at", { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      return (data ?? []) as unknown as RecentMatch[];
+    },
+  });
+}
+
+export function usePlayerMatches(profileId?: string, limit = 10) {
+  return useQuery({
+    queryKey: dashboardKeys.playerMatches(profileId, limit),
+    enabled: Boolean(profileId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("matches")
+        .select(
+          "*,winner:profiles!matches_winner_id_fkey(id,display_name,avatar_url),loser:profiles!matches_loser_id_fkey(id,display_name,avatar_url),theme:themes(id,name,slug)",
+        )
+        .or(`winner_id.eq.${profileId},loser_id.eq.${profileId}`)
         .order("played_at", { ascending: false })
         .limit(limit);
 

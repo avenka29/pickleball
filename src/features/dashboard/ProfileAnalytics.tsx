@@ -2,6 +2,7 @@ import { Activity, LineChart, TrendingDown, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
 import { Badge } from "../../components/Badge";
 import { RetroPanel } from "../../components/RetroPanel";
+import { TrendSvg } from "../../components/TrendSvg";
 import { getTrackRating, getTrackRecord, useRatingTrend } from "./api";
 import type { RankingTrack, TrackableProfile } from "./types";
 
@@ -73,7 +74,7 @@ function RatingStat({ label, value, record }: { label: string; value: string | n
   return (
     <div className="rounded-lg border-2 border-net-line bg-cream p-3">
       <p className="text-xs font-black uppercase text-court-green">{label}</p>
-      <div className="mt-1 font-display text-3xl leading-none text-deep-green">{value}</div>
+      <div className="mt-1 font-mono text-3xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
       <p className="mt-1 text-sm font-bold text-ink">{record} record</p>
     </div>
   );
@@ -83,39 +84,8 @@ function MiniStat({ label, value, icon }: { label: string; value: number; icon: 
   return (
     <div className="rounded-lg border-2 border-net-line bg-cream p-2">
       <div className="text-court-green">{icon}</div>
-      <div className="font-display text-xl leading-none text-deep-green">{value}</div>
+      <div className="font-mono text-xl font-bold leading-none tabular-nums text-deep-green">{value}</div>
       <div className="text-xs font-black uppercase text-ink">{label}</div>
     </div>
-  );
-}
-
-function TrendSvg({ points }: { points: number[] }) {
-  if (points.length < 2) {
-    return <div className="grid h-28 place-items-center rounded-lg border-2 border-dashed border-net-line bg-warm-white font-bold text-ink">Trend starts after two rated matches.</div>;
-  }
-
-  const width = 320;
-  const height = 112;
-  const min = Math.min(...points);
-  const max = Math.max(...points);
-  const spread = Math.max(1, max - min);
-  const path = points
-    .map((point, index) => {
-      const x = (index / Math.max(1, points.length - 1)) * width;
-      const y = height - ((point - min) / spread) * (height - 18) - 9;
-      return `${index === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-
-  return (
-    <svg className="h-28 w-full rounded-lg border-2 border-net-line bg-warm-white" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Rating trend">
-      <path d="M0 84 H320 M0 56 H320 M0 28 H320" stroke="#D9D2C2" strokeWidth="2" />
-      <path d={path} fill="none" stroke="#A84A30" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" />
-      {points.map((point, index) => {
-        const x = (index / Math.max(1, points.length - 1)) * width;
-        const y = height - ((point - min) / spread) * (height - 18) - 9;
-        return <circle key={`${point}-${index}`} cx={x} cy={y} r="4" fill="#E7B15A" stroke="#26332D" strokeWidth="2" />;
-      })}
-    </svg>
   );
 }
