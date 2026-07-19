@@ -1,4 +1,4 @@
-import { Clock, Trophy } from "lucide-react";
+import { Clock, Trash2, Trophy } from "lucide-react";
 import { Badge } from "../../components/Badge";
 import { RetroButton } from "../../components/RetroButton";
 import { RetroPanel } from "../../components/RetroPanel";
@@ -11,14 +11,28 @@ type RecentMatchesListProps = {
   selectedMatchId?: string | null;
   onViewMatch?: (match: RecentMatch) => void;
   onSelectPlayer?: (playerId: string) => void;
+  onDeleteMatch?: (match: RecentMatch) => void;
+  deletingMatchId?: string | null;
+  compact?: boolean;
 };
 
-export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewMatch, onSelectPlayer }: RecentMatchesListProps) {
+export function RecentMatchesList({
+  matches,
+  isLoading,
+  selectedMatchId,
+  onViewMatch,
+  onSelectPlayer,
+  onDeleteMatch,
+  deletingMatchId,
+  compact = false,
+}: RecentMatchesListProps) {
+  const shownMatches = compact ? matches.slice(0, 5) : matches;
+
   return (
-    <RetroPanel className="p-5">
+    <RetroPanel className={`${compact ? "history-preview" : ""} p-5`}>
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="font-display text-2xl text-deep-green">Recent matches</h2>
-        <Badge tone="neutral">{matches.length} shown</Badge>
+        <h2 className="font-display text-2xl text-deep-green">{compact ? "Recent feed" : "Recent matches"}</h2>
+        <Badge tone="neutral">{shownMatches.length} shown</Badge>
       </div>
 
       {isLoading ? (
@@ -38,7 +52,7 @@ export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewM
       ) : null}
 
       <div className="space-y-3">
-        {matches.map((match, index) => (
+        {shownMatches.map((match, index) => (
           <article
             key={match.id}
             id={`match-${match.id}`}
@@ -89,14 +103,34 @@ export function RecentMatchesList({ matches, isLoading, selectedMatchId, onViewM
                 </dl>
               ) : null}
             </div>
-            <RetroButton
-              type="button"
-              variant={selectedMatchId === match.id ? "highlight" : "secondary"}
-              className="self-start px-3 py-2 text-sm"
-              onClick={() => onViewMatch?.(match)}
-            >
-              Details
-            </RetroButton>
+            <div className="match-card-actions">
+              {compact ? (
+                <button type="button" className="match-link" onClick={() => onViewMatch?.(match)}>
+                  View
+                </button>
+              ) : (
+                <RetroButton
+                  type="button"
+                  variant={selectedMatchId === match.id ? "highlight" : "secondary"}
+                  className="px-3 py-2 text-sm"
+                  onClick={() => onViewMatch?.(match)}
+                >
+                  Details
+                </RetroButton>
+              )}
+              {onDeleteMatch ? (
+                <button
+                  type="button"
+                  className="match-delete-button"
+                  disabled={deletingMatchId === match.id}
+                  onClick={() => onDeleteMatch(match)}
+                  aria-label={`Delete match ${match.winner?.display_name ?? "winner"} versus ${match.loser?.display_name ?? "loser"}`}
+                >
+                  <Trash2 size={16} />
+                  <span>{deletingMatchId === match.id ? "Deleting" : "Delete"}</span>
+                </button>
+              ) : null}
+            </div>
           </article>
         ))}
       </div>

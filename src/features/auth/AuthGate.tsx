@@ -27,7 +27,7 @@ export function AuthGate({ children }: AuthGateProps) {
             <span />
             <span />
           </div>
-          <p className="font-black uppercase tracking-wide">Loading clubhouse...</p>
+          <p className="font-black uppercase tracking-wide">Loading match board...</p>
         </div>
       </div>
     );
@@ -39,7 +39,7 @@ export function AuthGate({ children }: AuthGateProps) {
         <section className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-5xl items-center">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-5">
-              <Badge tone="theme">Private Clubhouse</Badge>
+              <Badge tone="theme">Private ladder</Badge>
               <h1 className="font-display text-5xl leading-none text-deep-green sm:text-6xl">Pickleball ladder</h1>
               <p className="max-w-xl text-lg font-semibold text-ink">
                 A warm, fast scoreboard for trusted players to record matches, watch ratings, and keep tournament nights tidy.

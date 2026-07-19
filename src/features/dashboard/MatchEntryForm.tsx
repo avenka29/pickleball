@@ -1,9 +1,7 @@
-import { Minus, Plus, Save, Trophy, Users } from "lucide-react";
+import { Minus, Plus, Save } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import { Badge } from "../../components/Badge";
 import { RetroButton } from "../../components/RetroButton";
-import { RetroPanel } from "../../components/RetroPanel";
 import { useRecordMatch } from "./api";
 import type { LeaderboardPlayer, MatchEntryMode, Theme, TournamentSummary } from "./types";
 
@@ -21,6 +19,10 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
   const [sideATeammate, setSideATeammate] = useState("");
   const [sideBPlayer, setSideBPlayer] = useState("");
   const [sideBTeammate, setSideBTeammate] = useState("");
+  const [sideAPlayerSearch, setSideAPlayerSearch] = useState("");
+  const [sideATeammateSearch, setSideATeammateSearch] = useState("");
+  const [sideBPlayerSearch, setSideBPlayerSearch] = useState("");
+  const [sideBTeammateSearch, setSideBTeammateSearch] = useState("");
   const [sideAScore, setSideAScore] = useState(11);
   const [sideBScore, setSideBScore] = useState(9);
   const [tournamentId, setTournamentId] = useState("");
@@ -38,7 +40,6 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
     return null;
   }, [mode, sideAPlayer, sideATeammate, sideBPlayer, sideBTeammate, tournamentId, sideAScore, sideBScore]);
 
-  const isTied = sideAScore === sideBScore;
   const winnerSide: Side = sideAScore > sideBScore ? "a" : "b";
   const selectedWinner = winnerSide === "a" ? sideAPlayer : sideBPlayer;
   const selectedLoser = winnerSide === "a" ? sideBPlayer : sideAPlayer;
@@ -73,31 +74,27 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
   };
 
   return (
-    <RetroPanel strong className="court-scorecard p-5">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-2xl text-deep-green">Record match</h2>
-        <Badge tone={activeTheme ? "theme" : "neutral"}>{activeTheme?.name ?? "Standard Elo"}</Badge>
-      </div>
-
-      <form className="space-y-5" onSubmit={submitMatch}>
+    <div className="track-page-flow">
+      <section className="track-title-panel">
         <div>
-          <p className="mb-2 flex items-center gap-2 text-sm font-black uppercase text-court-green">
-            <Users size={16} />
-            Match mode
-          </p>
-          <div className="segmented-control segmented-control-3">
-            {(["singles", "doubles", "tournament"] as MatchEntryMode[]).map((item) => (
-              <button key={item} type="button" className={mode === item ? "is-active" : ""} onClick={() => setMode(item)}>
-                {item[0].toUpperCase() + item.slice(1)}
-              </button>
-            ))}
-          </div>
+          <h2>Track a Match</h2>
+          <p>Pick a mode, enter the score, and choose players.</p>
         </div>
+        <label className="track-mode-select">
+          <span>Match mode</span>
+          <select className="form-input" value={mode} onChange={(event) => setMode(event.target.value as MatchEntryMode)}>
+            <option value="singles">Singles</option>
+            <option value="doubles">Doubles</option>
+            <option value="tournament">Tournament</option>
+          </select>
+        </label>
+      </section>
 
+      <form className="match-form" onSubmit={submitMatch}>
         {mode === "tournament" ? (
-          <div className="grid gap-3 md:grid-cols-2">
-            <label className="block">
-              <span className="mb-2 block text-sm font-black uppercase text-court-green">Tournament</span>
+          <section className="form-grid">
+            <label>
+              <span>Tournament</span>
               <select className="form-input" value={tournamentId} onChange={(event) => setTournamentId(event.target.value)}>
                 <option value="">Select tournament</option>
                 {tournaments.map((tournament) => (
@@ -107,74 +104,59 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
                 ))}
               </select>
             </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-black uppercase text-court-green">Match ID</span>
-              <input
-                className="form-input"
-                placeholder="Optional bracket match id"
-                value={tournamentMatchId}
-                onChange={(event) => setTournamentMatchId(event.target.value)}
-              />
+            <label>
+              <span>Match ID</span>
+              <input className="form-input" placeholder="Optional bracket match id" value={tournamentMatchId} onChange={(event) => setTournamentMatchId(event.target.value)} />
             </label>
-          </div>
+          </section>
         ) : null}
 
-        <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
-          <PlayerScoreBlock
-            label="Side A"
-            playerId={sideAPlayer}
-            teammateId={sideATeammate}
-            score={sideAScore}
-            players={players}
-            mode={mode}
-            isWinning={!isTied && winnerSide === "a"}
-            onPlayerChange={setSideAPlayer}
-            onTeammateChange={setSideATeammate}
-            onScoreChange={setSideAScore}
-          />
+        <section className="track-score-section">
+          <div className="match-versus-grid">
+            <MatchSideCard
+              label="First score"
+              side="a"
+              playerId={sideAPlayer}
+              teammateId={sideATeammate}
+              playerSearch={sideAPlayerSearch}
+              teammateSearch={sideATeammateSearch}
+              score={sideAScore}
+              players={players}
+              mode={mode}
+              onPlayerChange={setSideAPlayer}
+              onTeammateChange={setSideATeammate}
+              onPlayerSearchChange={setSideAPlayerSearch}
+              onTeammateSearchChange={setSideATeammateSearch}
+              onScoreChange={setSideAScore}
+            />
 
-          <div className="vs-medallion mx-auto rounded-full border-3 border-deep-green bg-pickle-yellow px-5 py-3 font-display text-2xl text-deep-green">
-            VS
+            <div className="versus-token">VS</div>
+
+            <MatchSideCard
+              label="Second score"
+              side="b"
+              playerId={sideBPlayer}
+              teammateId={sideBTeammate}
+              playerSearch={sideBPlayerSearch}
+              teammateSearch={sideBTeammateSearch}
+              score={sideBScore}
+              players={players}
+              mode={mode}
+              onPlayerChange={setSideBPlayer}
+              onTeammateChange={setSideBTeammate}
+              onPlayerSearchChange={setSideBPlayerSearch}
+              onTeammateSearchChange={setSideBTeammateSearch}
+              onScoreChange={setSideBScore}
+            />
           </div>
+        </section>
 
-          <PlayerScoreBlock
-            label="Side B"
-            playerId={sideBPlayer}
-            teammateId={sideBTeammate}
-            score={sideBScore}
-            players={players}
-            mode={mode}
-            isWinning={!isTied && winnerSide === "b"}
-            onPlayerChange={setSideBPlayer}
-            onTeammateChange={setSideBTeammate}
-            onScoreChange={setSideBScore}
-          />
-        </div>
-
-        <p className="flex items-center gap-2 text-sm font-black uppercase text-court-green">
-          <Trophy size={16} />
-          {isTied ? "Winner is set automatically once scores differ." : `Side ${winnerSide === "a" ? "A" : "B"} wins the point — winner is set automatically from the score.`}
-        </p>
-
-        {validationMessage ? <p className="rounded-lg border-2 border-clay-red bg-warm-white p-3 text-sm font-black text-clay-red">{validationMessage}</p> : null}
-        {recordMatch.error ? <p className="rounded-lg border-2 border-clay-red bg-warm-white p-3 text-sm font-black text-clay-red">{recordMatch.error.message}</p> : null}
+        {validationMessage ? <p className="form-alert is-warning">{validationMessage}</p> : null}
+        {recordMatch.error ? <p className="form-alert is-danger">{recordMatch.error.message}</p> : null}
         {lastResult ? (
-          <p className="relative overflow-visible rounded-lg border-2 border-grass-green bg-pickle-yellow p-3 text-sm font-black text-deep-green">
+          <p className="form-alert is-success">
             {lastResult}
-            <span className="confetti-burst" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-              <i />
-            </span>
+            <span className="impact-puff" aria-hidden="true" />
           </p>
         ) : null}
 
@@ -183,87 +165,115 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
           {recordMatch.isPending ? "Recording..." : "Record Match"}
         </RetroButton>
       </form>
-    </RetroPanel>
+    </div>
   );
 }
 
-type PlayerScoreBlockProps = {
+type MatchSideCardProps = {
   label: string;
+  side: Side;
   playerId: string;
   teammateId: string;
+  playerSearch: string;
+  teammateSearch: string;
   score: number;
   players: LeaderboardPlayer[];
   mode: MatchEntryMode;
-  isWinning: boolean;
   onPlayerChange: (playerId: string) => void;
   onTeammateChange: (playerId: string) => void;
+  onPlayerSearchChange: (value: string) => void;
+  onTeammateSearchChange: (value: string) => void;
   onScoreChange: (score: number) => void;
 };
 
-function PlayerScoreBlock({
+function MatchSideCard({
   label,
+  side,
   playerId,
   teammateId,
+  playerSearch,
+  teammateSearch,
   score,
   players,
   mode,
-  isWinning,
   onPlayerChange,
   onTeammateChange,
+  onPlayerSearchChange,
+  onTeammateSearchChange,
   onScoreChange,
-}: PlayerScoreBlockProps) {
+}: MatchSideCardProps) {
+  const optionsId = `player-search-${side}`;
+  const teammateOptionsId = `teammate-search-${side}`;
+  const selectedPlayerName = players.find((player) => player.id === playerId)?.display_name || "";
+  const selectedTeammateName = players.find((player) => player.id === teammateId)?.display_name || "";
+  const scoreValue = Number.isFinite(score) ? score : 0;
+
+  const updatePlayerSearch = (value: string) => {
+    onPlayerSearchChange(value);
+    onPlayerChange(findPlayerId(players, value));
+  };
+
+  const updateTeammateSearch = (value: string) => {
+    onTeammateSearchChange(value);
+    onTeammateChange(findPlayerId(players, value));
+  };
+
   return (
-    <div className={`side-score-panel space-y-3 transition-colors duration-200 ${isWinning ? "border-grass-green" : ""}`}>
-      <label className="block">
-        <span className="mb-2 flex items-center gap-2 text-sm font-black uppercase text-court-green">
-          {mode === "doubles" ? `${label} player` : label}
-          {isWinning ? (
-            <Badge tone="win" className="gap-1">
-              <Trophy size={12} />
-              Winning
-            </Badge>
-          ) : null}
-        </span>
-        <select className="form-input" value={playerId} onChange={(event) => onPlayerChange(event.target.value)}>
-          <option value="">Select player</option>
-          {players.map((player) => (
-            <option key={player.id} value={player.id}>
-              {player.display_name || "Unnamed player"}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      {mode === "doubles" ? (
-        <label className="block">
-          <span className="mb-2 block text-sm font-black uppercase text-court-green">Teammate</span>
-          <select className="form-input" value={teammateId} onChange={(event) => onTeammateChange(event.target.value)}>
-            <option value="">Select teammate</option>
-            {players.map((player) => (
-              <option key={player.id} value={player.id}>
-                {player.display_name || "Unnamed player"}
-              </option>
-            ))}
-          </select>
-        </label>
-      ) : null}
-
-      <div className="score-stepper">
-        <button type="button" aria-label={`Decrease ${label} score`} onClick={() => onScoreChange(Math.max(0, score - 1))}>
+    <section className="match-side-card">
+      <div className="match-score-control">
+        <button type="button" aria-label={`Decrease ${label} score`} onClick={() => onScoreChange(Math.max(0, scoreValue - 1))}>
           <Minus size={18} />
         </button>
-        <input
-          aria-label={`${label} score`}
-          inputMode="numeric"
-          min={0}
-          type="number"
-          value={score}
-          onChange={(event) => onScoreChange(Number(event.target.value))}
-        />
-        <button type="button" aria-label={`Increase ${label} score`} onClick={() => onScoreChange(score + 1)}>
+        <input aria-label={`${label} score`} inputMode="numeric" min={0} type="number" value={scoreValue} onChange={(event) => onScoreChange(Number(event.target.value))} />
+        <button type="button" aria-label={`Increase ${label} score`} onClick={() => onScoreChange(scoreValue + 1)}>
           <Plus size={18} />
         </button>
       </div>
-    </div>
+
+      <div className="match-player-fields">
+        <label className="player-search-field">
+          <input
+            className="form-input"
+            list={optionsId}
+            aria-label={mode === "doubles" ? "Search first player" : "Search player"}
+            placeholder="Search players"
+            value={playerSearch || selectedPlayerName}
+            onChange={(event) => updatePlayerSearch(event.target.value)}
+            onFocus={() => onPlayerSearchChange(selectedPlayerName)}
+          />
+          <PlayerOptions id={optionsId} players={players} />
+        </label>
+
+        {mode === "doubles" ? (
+          <label className="player-search-field">
+            <input
+              className="form-input"
+              list={teammateOptionsId}
+              aria-label="Search second player"
+              placeholder="Search teammates"
+              value={teammateSearch || selectedTeammateName}
+              onChange={(event) => updateTeammateSearch(event.target.value)}
+              onFocus={() => onTeammateSearchChange(selectedTeammateName)}
+            />
+            <PlayerOptions id={teammateOptionsId} players={players} />
+          </label>
+        ) : null}
+      </div>
+    </section>
   );
+}
+
+function PlayerOptions({ id, players }: { id: string; players: LeaderboardPlayer[] }) {
+  return (
+    <datalist id={id}>
+      {players.map((player) => (
+        <option key={player.id} value={player.display_name || "Unnamed player"} />
+      ))}
+    </datalist>
+  );
+}
+
+function findPlayerId(players: LeaderboardPlayer[], value: string) {
+  const normalizedValue = value.trim().toLowerCase();
+  return players.find((player) => (player.display_name || "Unnamed player").trim().toLowerCase() === normalizedValue)?.id ?? "";
 }

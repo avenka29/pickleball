@@ -1,10 +1,10 @@
 import { Save, Shield, UserPlus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 import { Badge } from "../../components/Badge";
 import { RetroButton } from "../../components/RetroButton";
 import { RetroPanel } from "../../components/RetroPanel";
-import { useAddWhitelistedUser, useOverrideElo, useThemes, useUpdateThemeConfig, useWhitelist } from "./api";
+import { useAddWhitelistedUser, useOverrideElo, useWhitelist } from "./api";
 import type { LeaderboardPlayer, RankingTrack } from "./types";
 
 type AdminControlsProps = {
@@ -13,31 +13,14 @@ type AdminControlsProps = {
 
 export function AdminControls({ players }: AdminControlsProps) {
   const whitelist = useWhitelist();
-  const themes = useThemes();
   const addUser = useAddWhitelistedUser();
   const overrideElo = useOverrideElo();
-  const updateTheme = useUpdateThemeConfig();
-  const firstTheme = themes.data?.[0];
   const [email, setEmail] = useState("");
   const [roleOnSignup, setRoleOnSignup] = useState<"player" | "admin">("player");
   const [note, setNote] = useState("");
   const [playerId, setPlayerId] = useState("");
   const [track, setTrack] = useState<RankingTrack>("singles");
   const [elo, setElo] = useState(1200);
-  const [themeId, setThemeId] = useState("");
-  const selectedTheme = useMemo(() => themes.data?.find((theme) => theme.id === themeId) ?? firstTheme, [firstTheme, themeId, themes.data]);
-  const [themeName, setThemeName] = useState("");
-  const [themeDescription, setThemeDescription] = useState("");
-  const [themeConfig, setThemeConfig] = useState("{}");
-  const [themeActive, setThemeActive] = useState(true);
-
-  useEffect(() => {
-    if (!firstTheme || themeId) return;
-    setThemeName(firstTheme.name);
-    setThemeDescription(firstTheme.description ?? "");
-    setThemeConfig(JSON.stringify(firstTheme.rule_config ?? {}, null, 2));
-    setThemeActive(firstTheme.is_active);
-  }, [firstTheme, themeId]);
 
   const submitUser = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -50,30 +33,6 @@ export function AdminControls({ players }: AdminControlsProps) {
     overrideElo.mutate({ profileId: playerId, track, elo });
   };
 
-  const submitTheme = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!selectedTheme) return;
-    updateTheme.mutate({
-      themeId: selectedTheme.id,
-      slug: selectedTheme.slug,
-      name: themeName || selectedTheme.name,
-      description: themeDescription || selectedTheme.description || "",
-      startsAt: selectedTheme.starts_at,
-      endsAt: selectedTheme.ends_at,
-      ruleConfig: themeConfig || JSON.stringify(selectedTheme.rule_config ?? {}),
-      isActive: themeActive,
-    });
-  };
-
-  const loadTheme = (nextThemeId: string) => {
-    const nextTheme = themes.data?.find((theme) => theme.id === nextThemeId);
-    setThemeId(nextThemeId);
-    setThemeName(nextTheme?.name ?? "");
-    setThemeDescription(nextTheme?.description ?? "");
-    setThemeConfig(JSON.stringify(nextTheme?.rule_config ?? {}, null, 2));
-    setThemeActive(nextTheme?.is_active ?? true);
-  };
-
   return (
     <RetroPanel className="p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -84,7 +43,7 @@ export function AdminControls({ players }: AdminControlsProps) {
         <Badge tone="theme">{whitelist.data?.length ?? 0} allowed</Badge>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="grid gap-4 xl:grid-cols-2">
         <form className="space-y-3 rounded-lg border-2 border-net-line bg-cream p-3" onSubmit={submitUser}>
           <h3 className="font-display text-xl text-deep-green">User management</h3>
           <input className="form-input" type="email" placeholder="player@example.com" value={email} onChange={(event) => setEmail(event.target.value)} required />
@@ -124,34 +83,6 @@ export function AdminControls({ players }: AdminControlsProps) {
             {overrideElo.isPending ? "Saving..." : "Save Elo"}
           </RetroButton>
           {overrideElo.error ? <p className="text-sm font-black text-clay-red">{overrideElo.error.message}</p> : null}
-        </form>
-
-        <form className="space-y-3 rounded-lg border-2 border-net-line bg-cream p-3" onSubmit={submitTheme}>
-          <h3 className="font-display text-xl text-deep-green">Theme config</h3>
-          <select className="form-input" value={themeId || selectedTheme?.id || ""} onChange={(event) => loadTheme(event.target.value)} disabled={!themes.data?.length}>
-            {(themes.data ?? []).map((theme) => (
-              <option key={theme.id} value={theme.id}>
-                {theme.name}
-              </option>
-            ))}
-          </select>
-          <input className="form-input" placeholder={selectedTheme?.name ?? "Theme name"} value={themeName} onChange={(event) => setThemeName(event.target.value)} />
-          <textarea
-            className="form-input min-h-20 resize-y"
-            placeholder={selectedTheme?.description ?? "Description"}
-            value={themeDescription}
-            onChange={(event) => setThemeDescription(event.target.value)}
-          />
-          <textarea className="form-input min-h-24 resize-y font-mono text-sm" value={themeConfig} onChange={(event) => setThemeConfig(event.target.value)} />
-          <label className="flex min-h-11 items-center gap-3 rounded-lg border-2 border-net-line bg-warm-white px-3 font-black text-deep-green">
-            <input type="checkbox" checked={themeActive} onChange={(event) => setThemeActive(event.target.checked)} />
-            Active
-          </label>
-          <RetroButton className="w-full justify-center gap-2" disabled={updateTheme.isPending || !selectedTheme}>
-            <Save size={17} />
-            {updateTheme.isPending ? "Updating..." : "Update Theme"}
-          </RetroButton>
-          {updateTheme.error ? <p className="text-sm font-black text-clay-red">{updateTheme.error.message}</p> : null}
         </form>
       </div>
     </RetroPanel>

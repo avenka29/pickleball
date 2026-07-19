@@ -34,6 +34,7 @@ type LooseQueryBuilder<T = unknown> = PromiseLike<LooseQueryResult<T>> & {
   select(columns?: string): LooseQueryBuilder<T>;
   update(values: Record<string, unknown>): LooseQueryBuilder<T>;
   insert(values: Record<string, unknown>): LooseQueryBuilder<T>;
+  upsert(values: Record<string, unknown> | Record<string, unknown>[], options?: Record<string, unknown>): LooseQueryBuilder<T>;
   eq(column: string, value: unknown): LooseQueryBuilder<T>;
   lte(column: string, value: unknown): LooseQueryBuilder<T>;
   gte(column: string, value: unknown): LooseQueryBuilder<T>;
@@ -58,6 +59,7 @@ export const dashboardKeys = {
   ratingTrend: (profileId?: string, track?: RankingTrack) => ["dashboard", "rating-trend", profileId ?? "none", track ?? "all"] as const,
   tournaments: ["dashboard", "tournaments"] as const,
   tournamentDetail: (id?: string) => ["dashboard", "tournament", id ?? "none"] as const,
+  tournamentEntries: (id?: string) => ["dashboard", "tournament-entries", id ?? "none"] as const,
   players: ["dashboard", "players"] as const,
   whitelist: ["dashboard", "whitelist"] as const,
   themes: ["dashboard", "themes"] as const,
@@ -104,6 +106,27 @@ export function useLeaderboard(limit = 8, track: RankingTrack = "singles") {
         .filter((player) => getTrackRating(player, track) != null)
         .sort((a, b) => Number(getTrackRating(b, track) ?? 0) - Number(getTrackRating(a, track) ?? 0))
         .slice(0, limit);
+    },
+  });
+}
+
+export function useDeleteMatch() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (matchId: string) => {
+      const { error } = await looseSupabase.rpc("delete_match_and_recalculate", {
+        p_match_id: matchId,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: dashboardKeys.players });
+      void queryClient.invalidateQueries({ queryKey: dashboardKeys.leaderboard });
+      void queryClient.invalidateQueries({ queryKey: dashboardKeys.recentMatches });
+      void queryClient.invalidateQueries({ queryKey: ["dashboard", "rating-trend"] });
+      void queryClient.invalidateQueries({ queryKey: ["auth", "profile"] });
+      void queryClient.invalidateQueries({ queryKey: dashboardKeys.tournaments });
     },
   });
 }
@@ -270,6 +293,30 @@ export function useTournamentDetail(tournamentId?: string) {
   });
 }
 
+export function useTournamentEntries(tournamentId?: string) {
+  return useQuery({
+    queryKey: dashboardKeys.tournamentEntries(tournamentId),
+    enabled: Boolean(tournamentId),
+    queryFn: async () => {
+      const { data, error } = await looseSupabase
+        .from("tournament_entries")
+        .select("*,profile:profiles(id,display_name,avatar_url)")
+        .eq("tournament_id", tournamentId as string)
+        .order("seed", { ascending: true });
+
+      if (error) throw error;
+      return (data ?? []) as Array<{
+        id: string;
+        tournament_id: string;
+        profile_id: string;
+        seed: number | null;
+        is_bye?: boolean | null;
+        profile?: Pick<LeaderboardPlayer, "id" | "display_name" | "avatar_url"> | null;
+      }>;
+    },
+  });
+}
+
 async function getRevengeMultiplier(winnerId: string, loserId: string, theme: Theme | null) {
   if (!theme || theme.slug !== "revenge-week") return 1;
 
@@ -409,6 +456,42 @@ export function useJoinTournament() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: dashboardKeys.tournaments });
+    },
+  });
+}
+
+export function useRandomSeedTournament() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { tournamentId: string; playerIds: string[] }) => {
+      const uniquePlayerIds = Array.from(new Set(input.playerIds.filter(Boolean)));
+      if (!input.tournamentId) throw new Error("Choose a tournament first.");
+      if (uniquePlayerIds.length < 2) throw new Error("Choose at least two players.");
+
+      const { error: entryError } = await looseSupabase.from("tournament_entries").upsert(
+        uniquePlayerIds.map((profileId) => ({
+          tournament_id: input.tournamentId,
+          profile_id: profileId,
+          is_bye: false,
+        })),
+        { onConflict: "tournament_id,profile_id", ignoreDuplicates: true },
+      );
+
+      if (entryError) throw entryError;
+
+      const { data, error } = await looseSupabase.rpc("generate_single_elimination_bracket", {
+        tournament_id: input.tournamentId,
+        random_seed: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_data, input) => {
+      void queryClient.invalidateQueries({ queryKey: dashboardKeys.tournaments });
+      void queryClient.invalidateQueries({ queryKey: dashboardKeys.tournamentDetail(input.tournamentId) });
+      void queryClient.invalidateQueries({ queryKey: dashboardKeys.tournamentEntries(input.tournamentId) });
     },
   });
 }

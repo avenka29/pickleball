@@ -83,6 +83,12 @@ export type Database = {
         Args: Record<string, never>;
         Returns: Profile;
       };
+      delete_match_and_recalculate: {
+        Args: {
+          p_match_id: string;
+        };
+        Returns: void;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
