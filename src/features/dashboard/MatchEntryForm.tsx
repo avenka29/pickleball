@@ -1,4 +1,4 @@
-import { Minus, Plus, Save, Users } from "lucide-react";
+import { Minus, Plus, Save, Trophy, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { Badge } from "../../components/Badge";
@@ -23,7 +23,6 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
   const [sideBTeammate, setSideBTeammate] = useState("");
   const [sideAScore, setSideAScore] = useState(11);
   const [sideBScore, setSideBScore] = useState(9);
-  const [winnerSide, setWinnerSide] = useState<Side>("a");
   const [tournamentId, setTournamentId] = useState("");
   const [tournamentMatchId, setTournamentMatchId] = useState("");
   const [lastResult, setLastResult] = useState<string | null>(null);
@@ -39,6 +38,8 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
     return null;
   }, [mode, sideAPlayer, sideATeammate, sideBPlayer, sideBTeammate, tournamentId, sideAScore, sideBScore]);
 
+  const isTied = sideAScore === sideBScore;
+  const winnerSide: Side = sideAScore > sideBScore ? "a" : "b";
   const selectedWinner = winnerSide === "a" ? sideAPlayer : sideBPlayer;
   const selectedLoser = winnerSide === "a" ? sideBPlayer : sideAPlayer;
   const winnerScore = winnerSide === "a" ? sideAScore : sideBScore;
@@ -126,6 +127,7 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
             score={sideAScore}
             players={players}
             mode={mode}
+            isWinning={!isTied && winnerSide === "a"}
             onPlayerChange={setSideAPlayer}
             onTeammateChange={setSideATeammate}
             onScoreChange={setSideAScore}
@@ -142,23 +144,17 @@ export function MatchEntryForm({ players, activeTheme, tournaments }: MatchEntry
             score={sideBScore}
             players={players}
             mode={mode}
+            isWinning={!isTied && winnerSide === "b"}
             onPlayerChange={setSideBPlayer}
             onTeammateChange={setSideBTeammate}
             onScoreChange={setSideBScore}
           />
         </div>
 
-        <div>
-          <p className="mb-2 text-sm font-black uppercase text-court-green">Winner</p>
-          <div className="segmented-control">
-            <button type="button" className={winnerSide === "a" ? "is-active" : ""} onClick={() => setWinnerSide("a")}>
-              Side A
-            </button>
-            <button type="button" className={winnerSide === "b" ? "is-active" : ""} onClick={() => setWinnerSide("b")}>
-              Side B
-            </button>
-          </div>
-        </div>
+        <p className="flex items-center gap-2 text-sm font-black uppercase text-court-green">
+          <Trophy size={16} />
+          {isTied ? "Winner is set automatically once scores differ." : `Side ${winnerSide === "a" ? "A" : "B"} wins the point — winner is set automatically from the score.`}
+        </p>
 
         {validationMessage ? <p className="rounded-lg border-2 border-clay-red bg-warm-white p-3 text-sm font-black text-clay-red">{validationMessage}</p> : null}
         {recordMatch.error ? <p className="rounded-lg border-2 border-clay-red bg-warm-white p-3 text-sm font-black text-clay-red">{recordMatch.error.message}</p> : null}
@@ -198,6 +194,7 @@ type PlayerScoreBlockProps = {
   score: number;
   players: LeaderboardPlayer[];
   mode: MatchEntryMode;
+  isWinning: boolean;
   onPlayerChange: (playerId: string) => void;
   onTeammateChange: (playerId: string) => void;
   onScoreChange: (score: number) => void;
@@ -210,14 +207,23 @@ function PlayerScoreBlock({
   score,
   players,
   mode,
+  isWinning,
   onPlayerChange,
   onTeammateChange,
   onScoreChange,
 }: PlayerScoreBlockProps) {
   return (
-    <div className="side-score-panel space-y-3">
+    <div className={`side-score-panel space-y-3 transition-colors duration-200 ${isWinning ? "border-grass-green" : ""}`}>
       <label className="block">
-        <span className="mb-2 block text-sm font-black uppercase text-court-green">{mode === "doubles" ? `${label} player` : label}</span>
+        <span className="mb-2 flex items-center gap-2 text-sm font-black uppercase text-court-green">
+          {mode === "doubles" ? `${label} player` : label}
+          {isWinning ? (
+            <Badge tone="win" className="gap-1">
+              <Trophy size={12} />
+              Winning
+            </Badge>
+          ) : null}
+        </span>
         <select className="form-input" value={playerId} onChange={(event) => onPlayerChange(event.target.value)}>
           <option value="">Select player</option>
           {players.map((player) => (
