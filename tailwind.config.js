@@ -4,20 +4,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        "court-green": "#1D4A34",
-        "deep-green": "#12261C",
-        "grass-green": "#1E8E5A",
-        cream: "#F4F5F1",
-        "warm-white": "#FFFFFF",
-        "pickle-yellow": "#CBFF3D",
-        "clay-red": "#C93A22",
-        "dark-grey": "#12261C",
-        "soft-grey": "#E8EAE3",
-        ink: "#3A453D",
-        "net-line": "#D6D9CE",
+        "court-green": "#A84A30",
+        "deep-green": "#26332D",
+        "grass-green": "#3C7A54",
+        cream: "#EFEBE0",
+        "warm-white": "#FAF8F2",
+        "pickle-yellow": "#E7B15A",
+        "clay-red": "#B23A29",
+        "dark-grey": "#26332D",
+        "soft-grey": "#E6E0D3",
+        ink: "#5C574B",
+        "net-line": "#D9D2C2",
       },
       fontFamily: {
-        display: ['"Anton"', "Arial Black", "sans-serif"],
+        display: ['"Fraunces"', "Georgia", "serif"],
         sans: ['"Archivo"', "system-ui", "sans-serif"],
       },
       borderWidth: {
@@ -27,7 +27,7 @@ export default {
         dashboard: "1180px",
       },
       borderRadius: {
-        xl: "10px",
+        xl: "14px",
       },
     },
   },

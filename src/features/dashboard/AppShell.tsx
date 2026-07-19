@@ -28,7 +28,7 @@ function PaddleMark({ size }: { size: number }) {
       <circle cx="11" cy="12" r="1.3" fill="var(--color-cream)" />
       <circle cx="21" cy="12" r="1.3" fill="var(--color-cream)" />
       <circle cx="16" cy="16" r="1.3" fill="var(--color-cream)" />
-      <circle className="club-mark-ball" cx="26" cy="24" r="4.5" fill="var(--color-pickle-yellow)" stroke="currentColor" strokeWidth="1.5" />
+      <circle className="club-mark-ball" cx="26" cy="24" r="4.5" fill="var(--color-court-green)" stroke="currentColor" strokeWidth="1.5" />
     </svg>
   );
 }
